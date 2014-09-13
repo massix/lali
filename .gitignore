@@ -1,0 +1,7 @@
+*.swp
+*.py
+*.pyc
+*.o
+collection_tu
+element_tu
+
