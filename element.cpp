@@ -6,12 +6,12 @@
 using namespace todo;
 
 element::element() :
-	m_title("unset"), m_body("unset"), m_priority(0)
+	m_title(), m_body(), m_priority(0)
 {
 }
 
 element::element(std::string const & p_title) :
-	m_title(p_title), m_body("unset"), m_priority(0)
+	m_title(p_title), m_body(), m_priority(0)
 {
 }
 
