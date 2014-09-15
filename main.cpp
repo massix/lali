@@ -16,6 +16,7 @@ void usage(const char *p_pgmname)
   fprintf(stdout, "   insert title body  | inserts a todo\n");
   fprintf(stdout, "   delete index       | removes a todo\n");
   fprintf(stdout, "   list               | lists all the todos\n");
+  fprintf(stdout, "   modify index t b   | modify the todo at given index\n");
 }
 
 int main(int argc, char *argv[])
@@ -91,6 +92,34 @@ int main(int argc, char *argv[])
           l_collection.erase(l_collection.begin() + l_toErase);
         else {
           fprintf(stderr, "Index out of bounds..\n");
+        }
+      }
+      else {
+        usage(l_pgname);
+        return 127;
+      }
+    }
+    else if (strcmp(argv[l_arg], "modify") == 0)
+    {
+      if (++l_arg < argc)
+      {
+        uint32_t l_toModify = atoi(argv[l_arg]);
+        if (++l_arg < argc) {
+          std::string l_newTitle(argv[l_arg]);
+          std::string l_newBody;
+          if (++l_arg < argc) {
+            l_newBody = std::string(argv[l_arg]);
+          }
+          
+          if (l_collection.begin() + l_toModify < l_collection.end()) {
+            todo::element & l_element = l_collection[l_toModify];
+            l_element.m_title = l_newTitle;
+            l_element.m_body = l_newBody;
+          }
+        }
+        else {
+          usage(l_pgname);
+          return 127;
         }
       }
       else {
