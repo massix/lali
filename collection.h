@@ -20,6 +20,9 @@ class collection : public std::vector<todo::element>
 		std::ostream & serialize   (std::ostream & p_stream) const;
 		std::istream & deserialize (std::istream & p_stream);
 
+    void write_file() const;
+    void read_file();
+
 	private:
 		std::string m_filename;
 };

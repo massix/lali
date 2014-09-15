@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
 
 using namespace todo;
 
@@ -51,3 +52,20 @@ std::istream & collection::deserialize(std::istream & p_stream)
 	return p_stream;
 }
 
+void collection::write_file() const
+{
+  std::ofstream l_file;
+
+  l_file.open(m_filename.c_str(), std::ofstream::out | std::ofstream::binary);
+  serialize(l_file);
+  l_file.close();
+}
+
+void collection::read_file()
+{
+  std::ifstream l_file;
+
+  l_file.open(m_filename.c_str(), std::ifstream::in | std::ifstream::binary);
+  deserialize(l_file);
+  l_file.close();
+}
