@@ -2,6 +2,10 @@
 *.py
 *.pyc
 *.o
+*.bin
 collection_tu
 element_tu
+file_tu
+*.gdb*
+core
 
