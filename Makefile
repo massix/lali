@@ -16,7 +16,7 @@ collection_test_BINARY = collection_tu
 file_test_BINARY = file_tu
 file_test_OBJECTS = file_test.o
 
-main_OBJECTS = main.o
+main_OBJECTS = main.o application.o
 main_BINARY = todo
 
 all: $(main_BINARY) $(element_test_BINARY) $(collection_test_BINARY) $(file_test_BINARY)
