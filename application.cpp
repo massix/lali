@@ -229,7 +229,7 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  fprintf(stdout, "You have %s todos\n", printColor((*m_config)[NOTE_ID_COLOR], l_collection.size()).c_str());
+  fprintf(stdout, "You have %s todos\n", printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
   {
@@ -276,8 +276,8 @@ int application::run()
       if (m_parameters.m_note_id < l_collection.size()) {
         l_collection.erase(l_collection.begin() + m_parameters.m_note_id);
         fprintf(stdout, "Note %s erased -- you now have %s notes\n",
-            printColor("fgred", m_parameters.m_note_id).c_str(),
-            printColor("fgcyan", l_collection.size()).c_str());
+            printColor("red", m_parameters.m_note_id).c_str(),
+            printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
       }
       else {
         m_error = "Note out of range";

@@ -14,6 +14,7 @@ config::config(std::string const & p_filename) :
 {
   // Sane defaults
 
+  (*this)(NOTE_COUNT_COLOR) = "red";
   (*this)(NOTE_ID_COLOR) = "cyan";
   (*this)(NOTE_TITLE_COLOR) = "magenta";
   (*this)(NOTE_BODY_COLOR) = "gray";
@@ -47,6 +48,11 @@ bool config::parse_config()
     else if (l_string.substr(0, strlen(FILE_NOTES_DB)) == FILE_NOTES_DB)
     {
       (*this)(FILE_NOTES_DB) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+
+    else if (l_string.substr(0, strlen(NOTE_COUNT_COLOR)) == NOTE_COUNT_COLOR)
+    {
+      (*this)(NOTE_COUNT_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
 
     else if (l_string.substr(0, strlen(NOTE_ID_COLOR)) == NOTE_ID_COLOR)

@@ -12,6 +12,7 @@ int main()
   assert(l_config[FILE_CONFIG_FILE] == "test_file");
   assert(l_config[FILE_NOTES_DB] == "/Users/myuser/notes.bin");
 
+  assert(l_config[NOTE_COUNT_COLOR] == "red");
   assert(l_config[NOTE_ID_COLOR] == "gray");
   assert(l_config[NOTE_TITLE_COLOR] == "cyan");
   assert(l_config[NOTE_BODY_COLOR] == "green");

@@ -11,6 +11,7 @@
 
 #define NOTE_ID_COLOR           "note_id_color"
 #define NOTE_TITLE_COLOR        "note_title_color"
+#define NOTE_COUNT_COLOR        "note_count_color"
 #define NOTE_BODY_COLOR         "note_body_color"
 #define PRIORITY_LOW_COLOR      "priority_low_color"
 #define PRIORITY_DEFAULT_COLOR  "priority_default_color"
