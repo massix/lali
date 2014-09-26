@@ -9,12 +9,15 @@
 
 namespace todo
 {
+class config;
+
 class application
 {
   private:
     std::string m_appname;
     std::string m_error;
     std::map<std::string, std::string> m_colors;
+    config * m_config;
     class parameters
     {
       public:
@@ -49,6 +52,7 @@ class application
 
   public:
 		application(int argc, char *argv[]);
+    virtual ~application();
     int run();
 };
 
