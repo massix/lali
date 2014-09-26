@@ -1,5 +1,5 @@
 CXX      = g++
-CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"0.1.0\"
+CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"0.2.0\"
 
 element_OBJECTS = element.o
 collection_OBJECTS = collection.o
