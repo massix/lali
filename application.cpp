@@ -1,6 +1,7 @@
 #include "element.h"
 #include "application.h"
 #include "collection.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -12,28 +13,21 @@ application::application(int argc, char *argv[]) :
 {
   m_colors["reset"]       = "\x1b[0m";
   m_colors["bright"]      = "\x1b[1m";
-  m_colors["dim"]         = "\x1b[2m";
   m_colors["underscore"]  = "\x1b[4m";
-  m_colors["blink"]       = "\x1b[5m";
-  m_colors["reverse"]     = "\x1b[7m";
-  m_colors["hidden"]      = "\x1b[8m";
-  m_colors["fgblack"]     = "\x1b[30m";
-  m_colors["fgred"]       = "\x1b[31m";
-  m_colors["fggreen"]     = "\x1b[32m";
-  m_colors["fgyellow"]    = "\x1b[33m";
-  m_colors["fgblue"]      = "\x1b[34m";
-  m_colors["fgmagenta"]   = "\x1b[35m";
-  m_colors["fgcyan"]      = "\x1b[36m";
-  m_colors["fgwhite"]     = "\x1b[37m";
-  m_colors["bgblack"]     = "\x1b[40m";
-  m_colors["bgred"]       = "\x1b[41m";
-  m_colors["bggreen"]     = "\x1b[42m";
-  m_colors["bgyellow"]    = "\x1b[43m";
-  m_colors["bgblue"]      = "\x1b[44m";
-  m_colors["bgmagenta"]   = "\x1b[45m";
-  m_colors["bgcyan"]      = "\x1b[46m";
-  m_colors["bgwhite"]     = "\x1b[47m";
+  m_colors["black"]     = "\x1b[30m";
+  m_colors["red"]       = "\x1b[31m";
+  m_colors["green"]     = "\x1b[32m";
+  m_colors["yellow"]    = "\x1b[33m";
+  m_colors["blue"]      = "\x1b[34m";
+  m_colors["magenta"]   = "\x1b[35m";
+  m_colors["cyan"]      = "\x1b[36m";
+  m_colors["white"]     = "\x1b[37m";
 
+}
+
+application::~application()
+{
+  if (m_config) delete m_config;
 }
 
 std::string application::printColor(std::string const & l_color, std::string const & l_string, bool bright, bool underline)
@@ -67,6 +61,8 @@ bool application::fill_parameters(int argc, char *argv[])
   bool l_ret(true);
   int l_index(1);
 
+  m_config = 0;
+
   // Sane defaults
   m_parameters.m_filling_body = false;
   m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.todorc");
@@ -81,7 +77,7 @@ bool application::fill_parameters(int argc, char *argv[])
     if (m_parameters.m_action.empty())
       m_parameters.m_action = l_param;
 
-    else if (l_param == "-h" or l_param == "--help")
+    else if (l_param == "-h" or l_param == "--help" or l_param == "-v" or l_param == "--version")
     {
       l_ret = false;
     }
@@ -152,7 +148,7 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kDelete;
   else if (m_parameters.m_action == "modify" or m_parameters.m_action == "m")
     m_action = kModify;
-  else if (m_parameters.m_action == "help" or m_parameters.m_action == "-h" or m_parameters.m_action == "--help") {
+  else if (m_parameters.m_action == "help" or m_parameters.m_action == "-h" or m_parameters.m_action == "--help" or m_parameters.m_action == "-v" or m_parameters.m_action == "--version") {
     l_ret = false;
   }
 
@@ -160,6 +156,11 @@ bool application::fill_parameters(int argc, char *argv[])
   {
     m_error = "Missing title for note!";
     l_ret = false;
+  }
+
+  if (l_ret) {
+    m_config = new config(m_parameters.m_todorc);
+    l_ret = m_config->parse_config();
   }
 
   return l_ret;
@@ -170,6 +171,7 @@ void application::print_usage()
   if (not m_error.empty())
     std::cerr << m_error << std::endl;
 
+  printf("   -[ Todo list version %s ]-\n", TODO_VERSION);
   printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
   printf("  List of available actions\n");
   printf("    list        | l                  list all notes in the db\n");
@@ -184,26 +186,27 @@ void application::print_usage()
   printf(" --priority     | -p id              priority of the new note\n");
   printf("   --todorc     | -r file            use this todorc file\n");
   printf("   --tododb     | -d file            use this db of notes\n");
+  printf("  --version     | -v                 print version and exit\n");
 }
 
 void application::pretty_print_element(todo::element const & p_element, uint32_t p_index)
 {
   fprintf(stdout, "[%s] %s", 
-      printColor("fgcyan", p_index).c_str(), 
-      printColor("fgblue", p_element.m_title).c_str());
+      printColor((*m_config)[NOTE_ID_COLOR], p_index).c_str(), 
+      printColor((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
   if (not p_element.m_body.empty())
     fprintf(stdout, " : %s", 
-        printColor("fgmagenta", p_element.m_body).c_str());
+        printColor((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
   switch (p_element.m_priority) {
     case 1:
-      fprintf(stdout, " : %s\n", printColor("fgyellow", "medium priority").c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
       break;
     case 2:
-      fprintf(stdout, " : %s\n", printColor("fgred", "high priority", true, true).c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
       break;
     default:
-      fprintf(stdout, " : %s\n", printColor("fggreen", "low priority").c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
       break;
   }
 
@@ -216,18 +219,11 @@ int application::run()
     return 127;
   }
 
-  std::string l_confFile = std::string(getenv("HOME")) + "/.todorc";
   std::string l_db;
-
-  if (not m_parameters.m_todorc.empty())
-    l_confFile = m_parameters.m_todorc;
 
   if (m_parameters.m_tododb.empty())
   {
-    std::ifstream l_config;
-    l_config.open(l_confFile.c_str(), std::ifstream::in | std::ifstream::binary);
-    l_config >> l_db;
-    l_config.close();
+    l_db = (*m_config)[FILE_CONFIG_FILE];
   }
 
   else
@@ -235,7 +231,7 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  fprintf(stdout, "You have %s todos\n", printColor("fgcyan", l_collection.size()).c_str());
+  fprintf(stdout, "You have %s todos\n", printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
   {
@@ -282,8 +278,8 @@ int application::run()
       if (m_parameters.m_note_id < l_collection.size()) {
         l_collection.erase(l_collection.begin() + m_parameters.m_note_id);
         fprintf(stdout, "Note %s erased -- you now have %s notes\n",
-            printColor("fgred", m_parameters.m_note_id).c_str(),
-            printColor("fgcyan", l_collection.size()).c_str());
+            printColor("red", m_parameters.m_note_id).c_str(),
+            printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
       }
       else {
         m_error = "Note out of range";
