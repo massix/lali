@@ -77,7 +77,7 @@ bool application::fill_parameters(int argc, char *argv[])
     if (m_parameters.m_action.empty())
       m_parameters.m_action = l_param;
 
-    else if (l_param == "-h" or l_param == "--help")
+    else if (l_param == "-h" or l_param == "--help" or l_param == "-v" or l_param == "--version")
     {
       l_ret = false;
     }
@@ -148,7 +148,7 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kDelete;
   else if (m_parameters.m_action == "modify" or m_parameters.m_action == "m")
     m_action = kModify;
-  else if (m_parameters.m_action == "help" or m_parameters.m_action == "-h" or m_parameters.m_action == "--help") {
+  else if (m_parameters.m_action == "help" or m_parameters.m_action == "-h" or m_parameters.m_action == "--help" or m_parameters.m_action == "-v" or m_parameters.m_action == "--version") {
     l_ret = false;
   }
 
@@ -171,6 +171,7 @@ void application::print_usage()
   if (not m_error.empty())
     std::cerr << m_error << std::endl;
 
+  printf("   -[ Todo list version %s ]-\n", TODO_VERSION);
   printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
   printf("  List of available actions\n");
   printf("    list        | l                  list all notes in the db\n");
@@ -185,6 +186,7 @@ void application::print_usage()
   printf(" --priority     | -p id              priority of the new note\n");
   printf("   --todorc     | -r file            use this todorc file\n");
   printf("   --tododb     | -d file            use this db of notes\n");
+  printf("  --version     | -v                 print version and exit\n");
 }
 
 void application::pretty_print_element(todo::element const & p_element, uint32_t p_index)
