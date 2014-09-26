@@ -6,6 +6,7 @@
 collection_tu
 element_tu
 file_tu
+config_tu
 todo
 *.gdb*
 core
