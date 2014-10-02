@@ -8,13 +8,18 @@
 using namespace todo;
 
 collection::collection(std::string const & p_filename) :
-	m_filename(p_filename), m_sorted(0)
+	m_filename(p_filename), m_sorted(0), m_longest_string(0)
 {
 }
 
 collection::collection() :
-  m_sorted(0)
+  m_sorted(0), m_longest_string(0)
 {
+}
+
+uint32_t collection::get_longest_string() const
+{
+  return m_longest_string;
 }
 
 collection::~collection()
@@ -79,16 +84,23 @@ void collection::read_file()
 
 void collection::push_back(todo::element & p_element)
 {
+  if (p_element.m_title.size() + p_element.m_body.size() > m_longest_string)
+    m_longest_string = p_element.m_title.size() + p_element.m_body.size();
+
   p_element.m_index = size();
   if (m_sorted) {
     delete m_sorted;
     m_sorted = 0;
   }
+
   return std::vector<todo::element>::push_back(p_element);
 }
 
 void collection::push_back_original(todo::element const & p_element)
 {
+  if ( (p_element.m_title.size() + p_element.m_body.size()) > m_longest_string)
+    m_longest_string = p_element.m_title.size() + p_element.m_body.size();
+
   return std::vector<todo::element>::push_back(p_element);
 }
 
@@ -113,6 +125,8 @@ todo::collection const & collection::sort_by_priority()
     m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
     m_sorted->insert(m_sorted->end(), l_medium.begin(), l_medium.end());
     m_sorted->insert(m_sorted->end(), l_low.begin(), l_low.end());
+
+    m_sorted->m_longest_string = std::max(std::max(l_low.m_longest_string, l_medium.m_longest_string), l_high.m_longest_string);
   }
 
   return *m_sorted;
