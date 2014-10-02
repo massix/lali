@@ -25,8 +25,6 @@ class collection : public std::vector<todo::element>
     void read_file();
 
     collection const & sort_by_priority();
-
-    uint32_t get_longest_string() const;
   protected:
     collection();
     void push_back_original(todo::element const & p_element);
@@ -34,7 +32,6 @@ class collection : public std::vector<todo::element>
 	private:
 		std::string   m_filename;
     collection *  m_sorted;
-    uint32_t      m_longest_string;
 };
 
 }

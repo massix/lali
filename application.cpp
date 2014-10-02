@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
-#include <iomanip>
 
 using namespace todo;
 
@@ -46,7 +45,7 @@ std::string application::printColor(std::string const & l_color, std::string con
 std::string application::printColor(std::string const & l_color, int l_number, bool bright, bool underline)
 {
   char l_buffer[1024] = { 0 };
-  sprintf(l_buffer, "%2d", l_number);
+  sprintf(l_buffer, "%02d", l_number);
   std::string ret;
   if (underline) ret += m_colors["underscore"];
   if (bright) ret += m_colors["bright"];
@@ -192,18 +191,22 @@ void application::print_usage()
 
 void application::pretty_print_element(todo::element const & p_element)
 {
-  std::cout << "|  " << printColor((*m_config)[NOTE_ID_COLOR], p_element.m_index) << "  | ";
-  std::cout << std::left << std::setw(m_longest_line + 14) << printColor((*m_config)[NOTE_TITLE_COLOR], p_element.m_title) << " | " << std::setw(0);
+  fprintf(stdout, "[%s] %s", 
+      printColor((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(), 
+      printColor((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
+  if (not p_element.m_body.empty())
+    fprintf(stdout, " : %s", 
+        printColor((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
   switch (p_element.m_priority) {
     case 1:
-      fprintf(stdout, "  %s   |\n", printColor((*m_config)[PRIORITY_DEFAULT_COLOR], "TODO").c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
       break;
     case 2:
-      fprintf(stdout, "  %s   |\n", printColor((*m_config)[PRIORITY_HIGH_COLOR], "HIGH", true, true).c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
       break;
     default:
-      fprintf(stdout, "  %s   |\n", printColor((*m_config)[PRIORITY_LOW_COLOR], "FUCK").c_str());
+      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
       break;
   }
 
@@ -235,42 +238,10 @@ int application::run()
     case kList:
     {
       todo::collection const & l_sorted = l_collection.sort_by_priority();
-      m_longest_line = l_sorted.get_longest_string();
-
-      // Print lines
-      printf("+------+");
-      for (uint32_t l_idx = 0; l_idx < m_longest_line; l_idx++)
-        printf("-");
-      printf("---+----------+\n");
-
-      // Print header
-      printf("|  %s  |", printColor((*m_config)[NOTE_ID_COLOR], "ID", true, true).c_str());
-      for (uint32_t l_idx = 0; l_idx < m_longest_line; l_idx++) {
-        if (l_idx == (l_sorted.get_longest_string() - 5) / 2) {
-          printf("%s", printColor((*m_config)[NOTE_TITLE_COLOR], "TITLE", true, true).c_str()); 
-          l_idx += 4;
-        }
-        printf(" ");
-      }
-      printf("  | %s |\n", printColor((*m_config)[PRIORITY_DEFAULT_COLOR], "PRIORITY", true, true).c_str());
-
-      // Print lines
-      printf("+------+");
-      for (uint32_t l_idx = 0; l_idx < m_longest_line; l_idx++)
-        printf("-");
-      printf("---+----------+\n");
-
-      // Print Elements
       todo::collection::const_iterator l_iterator = l_sorted.begin();
       for (uint32_t l_idx = 0; l_iterator != l_sorted.end(); ++l_iterator, l_idx++) {
         pretty_print_element(*l_iterator);
       }
-
-      // Print lines
-      printf("+------+");
-      for (uint32_t l_idx = 0; l_idx < l_sorted.get_longest_string(); l_idx++)
-        printf("-");
-      printf("---+----------+\n");
       break;
     }
     case kModify:

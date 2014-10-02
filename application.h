@@ -44,7 +44,6 @@ class application
 
     bool fill_parameters(int argc, char *argv[]);
     bool status;
-    uint32_t m_longest_line;
 
     void print_usage();
     std::string printColor(std::string const & l_color, std::string const & l_string, bool bright = true, bool underline = false);
