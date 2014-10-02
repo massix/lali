@@ -30,7 +30,7 @@ bool config::parse_config()
   uint8_t l_index(0);
 
   // Open file
-  std::ifstream l_file(m_config_file, std::ifstream::in | std::ifstream::binary);
+  std::ifstream l_file(m_config_file.c_str(), std::ifstream::in | std::ifstream::binary);
 
   // Read line per line
   while (not l_file.eof())
