@@ -24,11 +24,14 @@ class collection : public std::vector<todo::element>
     void write_file() const;
     void read_file();
 
+    collection const & sort_by_priority();
   protected:
     collection();
+    void push_back_original(todo::element const & p_element);
 
 	private:
-		std::string m_filename;
+		std::string   m_filename;
+    collection *  m_sorted;
 };
 
 }

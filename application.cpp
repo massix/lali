@@ -237,8 +237,9 @@ int application::run()
   {
     case kList:
     {
-      todo::collection::const_iterator l_iterator = l_collection.begin();
-      for (uint32_t l_idx = 0; l_iterator != l_collection.end(); ++l_iterator, l_idx++) {
+      todo::collection const & l_sorted = l_collection.sort_by_priority();
+      todo::collection::const_iterator l_iterator = l_sorted.begin();
+      for (uint32_t l_idx = 0; l_iterator != l_sorted.end(); ++l_iterator, l_idx++) {
         pretty_print_element(*l_iterator);
       }
       break;

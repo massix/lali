@@ -8,12 +8,18 @@
 using namespace todo;
 
 collection::collection(std::string const & p_filename) :
-	m_filename(p_filename)
+	m_filename(p_filename), m_sorted(0)
+{
+}
+
+collection::collection() :
+  m_sorted(0)
 {
 }
 
 collection::~collection()
 {
+  if (m_sorted) delete m_sorted;
 }
 
 std::ostream & collection::serialize(std::ostream & p_stream) const
@@ -74,6 +80,41 @@ void collection::read_file()
 void collection::push_back(todo::element & p_element)
 {
   p_element.m_index = size();
+  if (m_sorted) {
+    delete m_sorted;
+    m_sorted = 0;
+  }
   return std::vector<todo::element>::push_back(p_element);
+}
+
+void collection::push_back_original(todo::element const & p_element)
+{
+  return std::vector<todo::element>::push_back(p_element);
+}
+
+todo::collection const & collection::sort_by_priority()
+{
+  if (m_sorted == 0)
+  {
+    collection l_low;
+    collection l_medium;
+    collection l_high;
+
+    m_sorted = new collection();
+
+    const_iterator l_iterator = begin();
+    for (; l_iterator != end(); ++l_iterator)
+    {
+      if (l_iterator->m_priority == 0) l_low.push_back_original(*l_iterator);
+      else if (l_iterator->m_priority == 1) l_medium.push_back_original(*l_iterator);
+      else l_high.push_back_original(*l_iterator);
+    }
+
+    m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
+    m_sorted->insert(m_sorted->end(), l_medium.begin(), l_medium.end());
+    m_sorted->insert(m_sorted->end(), l_low.begin(), l_low.end());
+  }
+
+  return *m_sorted;
 }
 
