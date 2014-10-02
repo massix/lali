@@ -174,10 +174,10 @@ void application::print_usage()
   printf("   -[ Todo list version %s ]-\n", TODO_VERSION);
   printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
   printf("  List of available actions\n");
-  printf("    list        | l                  list all notes in the db\n");
-  printf("  insert        | i <parameters>     insert a new note\n");
-  printf("  modify        | m <parameters>     modify a given note\n");
-  printf("  delete        | d <parameters>     delete a given note\n");
+  printf("       list     | l                  list all notes in the db\n");
+  printf("     insert     | i <parameters>     insert a new note\n");
+  printf("     modify     | m <parameters>     modify a given note\n");
+  printf("     delete     | d <parameters>     delete a given note\n");
   printf("\n");
   printf(" List of available parameters\n");
   printf("     --note     | -n id              specify the note id\n");
