@@ -44,6 +44,7 @@ std::istream & collection::deserialize(std::istream & p_stream)
 	{
 		todo::element l_element;
 		l_element.deserialize(p_stream);
+    l_element.m_index = l_iter;
 		push_back(l_element);
 
 		p_stream >> l_separator;
@@ -69,3 +70,10 @@ void collection::read_file()
   deserialize(l_file);
   l_file.close();
 }
+
+void collection::push_back(todo::element & p_element)
+{
+  p_element.m_index = size();
+  return std::vector<todo::element>::push_back(p_element);
+}
+

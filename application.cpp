@@ -189,10 +189,10 @@ void application::print_usage()
   printf("  --version     | -v                 print version and exit\n");
 }
 
-void application::pretty_print_element(todo::element const & p_element, uint32_t p_index)
+void application::pretty_print_element(todo::element const & p_element)
 {
   fprintf(stdout, "[%s] %s", 
-      printColor((*m_config)[NOTE_ID_COLOR], p_index).c_str(), 
+      printColor((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(), 
       printColor((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
   if (not p_element.m_body.empty())
     fprintf(stdout, " : %s", 
@@ -239,7 +239,7 @@ int application::run()
     {
       todo::collection::const_iterator l_iterator = l_collection.begin();
       for (uint32_t l_idx = 0; l_iterator != l_collection.end(); ++l_iterator, l_idx++) {
-        pretty_print_element(*l_iterator, l_idx);
+        pretty_print_element(*l_iterator);
       }
       break;
     }
@@ -256,7 +256,7 @@ int application::run()
           l_element.m_body.clear();
   
 
-        pretty_print_element(l_element, m_parameters.m_note_id);
+        pretty_print_element(l_element);
       }
       else {
         m_error = "Note out of range";
@@ -270,7 +270,7 @@ int application::run()
       if (m_parameters.m_priority < 3)
         l_element.m_priority = m_parameters.m_priority;
       l_collection.push_back(l_element);
-      pretty_print_element(l_element, l_collection.size() - 1);
+      pretty_print_element(l_element);
       break;
     }
     case kDelete:

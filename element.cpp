@@ -6,17 +6,17 @@
 using namespace todo;
 
 element::element() :
-	m_title(), m_body(), m_priority(0)
+	m_title(), m_body(), m_priority(0), m_index(0)
 {
 }
 
 element::element(std::string const & p_title) :
-	m_title(p_title), m_body(), m_priority(0)
+	m_title(p_title), m_body(), m_priority(0), m_index(0)
 {
 }
 
 element::element(std::string const & p_title, std::string const & p_body) :
-	m_title(p_title), m_body(p_body), m_priority(0)
+	m_title(p_title), m_body(p_body), m_priority(0), m_index(0)
 {
 }
 

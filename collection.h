@@ -16,12 +16,16 @@ class collection : public std::vector<todo::element>
 		collection(std::string const & p_filename);
 
 		virtual ~collection();
+    virtual void push_back(todo::element & p_element);
 
 		std::ostream & serialize   (std::ostream & p_stream) const;
 		std::istream & deserialize (std::istream & p_stream);
 
     void write_file() const;
     void read_file();
+
+  protected:
+    collection();
 
 	private:
 		std::string m_filename;

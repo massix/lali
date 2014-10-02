@@ -48,7 +48,7 @@ class application
     void print_usage();
     std::string printColor(std::string const & l_color, std::string const & l_string, bool bright = true, bool underline = false);
     std::string printColor(std::string const & l_color, int l_number, bool bright = true, bool underline = false);
-    void pretty_print_element(todo::element const & p_element, uint32_t p_index);
+    void pretty_print_element(todo::element const & p_element);
 
   public:
 		application(int argc, char *argv[]);
