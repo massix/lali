@@ -8,7 +8,7 @@
 
 using namespace todo;
 
-application::application(int argc, char *argv[]) : 
+application::application(int argc, char *argv[]) :
   status(fill_parameters(argc, argv))
 {
   m_colors["reset"]       = "\x1b[0m";
@@ -30,7 +30,7 @@ application::~application()
   if (m_config) delete m_config;
 }
 
-std::string application::printColor(std::string const & l_color, std::string const & l_string, bool bright, bool underline)
+std::string application::print_color(std::string const & l_color, std::string const & l_string, bool bright, bool underline)
 {
   std::string ret;
   if (underline) ret += m_colors["underscore"];
@@ -42,7 +42,7 @@ std::string application::printColor(std::string const & l_color, std::string con
   return ret;
 }
 
-std::string application::printColor(std::string const & l_color, int l_number, bool bright, bool underline)
+std::string application::print_color(std::string const & l_color, int l_number, bool bright, bool underline)
 {
   char l_buffer[1024] = { 0 };
   sprintf(l_buffer, "%02d", l_number);
@@ -56,7 +56,7 @@ std::string application::printColor(std::string const & l_color, int l_number, b
   return ret;
 }
 
-bool application::fill_parameters(int argc, char *argv[]) 
+bool application::fill_parameters(int argc, char *argv[])
 {
   bool l_ret(true);
   int l_index(1);
@@ -106,7 +106,7 @@ bool application::fill_parameters(int argc, char *argv[])
       else
       {
         l_ret = false;
-        m_error = "Missing ID for note"; 
+        m_error = "Missing ID for note";
       }
     }
 
@@ -126,14 +126,14 @@ bool application::fill_parameters(int argc, char *argv[])
     {
       if (not m_parameters.m_title.empty())
         m_parameters.m_title += " ";
-      m_parameters.m_title += std::string(argv[l_index]); 
+      m_parameters.m_title += std::string(argv[l_index]);
     }
 
     else
     {
       if (not m_parameters.m_body.empty())
         m_parameters.m_body += " ";
-      m_parameters.m_body += std::string(argv[l_index]); 
+      m_parameters.m_body += std::string(argv[l_index]);
     }
 
     l_index++;
@@ -148,7 +148,11 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kDelete;
   else if (m_parameters.m_action == "modify" or m_parameters.m_action == "m")
     m_action = kModify;
-  else if (m_parameters.m_action == "help" or m_parameters.m_action == "-h" or m_parameters.m_action == "--help" or m_parameters.m_action == "-v" or m_parameters.m_action == "--version") {
+  else if (m_parameters.m_action == "help" or
+           m_parameters.m_action == "-h" or
+           m_parameters.m_action == "--help" or
+           m_parameters.m_action == "-v" or
+           m_parameters.m_action == "--version") {
     l_ret = false;
   }
 
@@ -191,22 +195,22 @@ void application::print_usage()
 
 void application::pretty_print_element(todo::element const & p_element)
 {
-  fprintf(stdout, "[%s] %s", 
-      printColor((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(), 
-      printColor((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
+  fprintf(stdout, "[%s] %s",
+      print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
+      print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
   if (not p_element.m_body.empty())
-    fprintf(stdout, " : %s", 
-        printColor((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
+    fprintf(stdout, " : %s",
+        print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
   switch (p_element.m_priority) {
     case 1:
-      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
+      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
       break;
     case 2:
-      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
+      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
       break;
     default:
-      fprintf(stdout, " : %s\n", printColor((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
+      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
       break;
   }
 
@@ -231,7 +235,7 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  fprintf(stdout, "You have %s todos\n", printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
+  fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
   {
@@ -247,7 +251,7 @@ int application::run()
     case kModify:
       if (m_parameters.m_note_id < l_collection.size()) {
         todo::element & l_element = l_collection[m_parameters.m_note_id];
-        if (m_parameters.m_priority < 3) 
+        if (m_parameters.m_priority < 3)
           l_element.m_priority = m_parameters.m_priority;
         if (not m_parameters.m_title.empty())
           l_element.m_title = m_parameters.m_title;
@@ -255,7 +259,7 @@ int application::run()
           l_element.m_body = m_parameters.m_body;
         if (m_parameters.m_body == "--")
           l_element.m_body.clear();
-  
+
 
         pretty_print_element(l_element);
       }
@@ -279,15 +283,15 @@ int application::run()
       if (m_parameters.m_note_id < l_collection.size()) {
         l_collection.erase(l_collection.begin() + m_parameters.m_note_id);
         fprintf(stdout, "Note %s erased -- you now have %s notes\n",
-            printColor("red", m_parameters.m_note_id).c_str(),
-            printColor((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
+            print_color("red", m_parameters.m_note_id).c_str(),
+            print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
       }
       else {
         m_error = "Note out of range";
         print_usage();
         return 127;
       }
-    
+
       break;
     }
   }
@@ -296,4 +300,3 @@ int application::run()
 
   return 0;
 }
-

@@ -45,7 +45,6 @@ check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(co
 	./$(collection_test_BINARY)
 	./$(file_test_BINARY)
 	./$(config_test_BINARY)
-	
-clean: 
-	rm -f *.o *.bin $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(main_BINARY) $(config_test_BINARY)
 
+clean:
+	rm -f *.o *.bin $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(main_BINARY) $(config_test_BINARY)
