@@ -2,6 +2,8 @@ VERSION  = 0.2.1
 CXX      = g++
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\"
 
+PREFIX   = /usr/local
+
 element_OBJECTS = element.o
 collection_OBJECTS = collection.o
 config_OBJECTS = config.o
@@ -21,7 +23,7 @@ config_test_OBJECTS = config_test.o
 main_OBJECTS = main.o application.o
 main_BINARY = todo
 
-all: $(main_BINARY) $(element_test_BINARY) $(collection_test_BINARY) $(file_test_BINARY) $(config_test_BINARY)
+all: $(main_BINARY)
 
 .cpp.o: %.cpp
 	@$(CXX) $(CXXFLAGS) -I. -c -o $@ $?
@@ -56,6 +58,14 @@ check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(co
 	@./$(file_test_BINARY)
 	@echo "Checking $(config_test_BINARY)"
 	@./$(config_test_BINARY)
+
+install:
+	@echo "Installing in ${PREFIX}"
+	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/todo
+
+remove:
+	@echo "Removing from ${PREFIX}"
+	@rm -f ${PREFIX}/bin/todo
 
 clean:
 	@echo "Clean"
