@@ -92,7 +92,7 @@ void collection::push_back_original(todo::element const & p_element)
   return std::vector<todo::element>::push_back(p_element);
 }
 
-todo::collection const & collection::sort_by_priority()
+todo::collection const & collection::sort_by_priority(bool ascendent)
 {
   if (m_sorted == 0)
   {
@@ -110,11 +110,18 @@ todo::collection const & collection::sort_by_priority()
       else l_high.push_back_original(*l_iterator);
     }
 
-    m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
+    if (not ascendent)
+      m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
+    else
+      m_sorted->insert(m_sorted->end(), l_low.begin(), l_low.end());
+
     m_sorted->insert(m_sorted->end(), l_medium.begin(), l_medium.end());
-    m_sorted->insert(m_sorted->end(), l_low.begin(), l_low.end());
+
+    if (not ascendent)
+      m_sorted->insert(m_sorted->end(), l_low.begin(), l_low.end());
+    else
+      m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
   }
 
   return *m_sorted;
 }
-

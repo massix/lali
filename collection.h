@@ -24,7 +24,7 @@ class collection : public std::vector<todo::element>
     void write_file() const;
     void read_file();
 
-    collection const & sort_by_priority();
+    collection const & sort_by_priority(bool ascendent = false);
   protected:
     collection();
     void push_back_original(todo::element const & p_element);
