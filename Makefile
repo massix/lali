@@ -1,7 +1,6 @@
 VERSION  = 0.2.1
 CXX      = g++
-CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\"
-
+CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11
 PREFIX   = /usr/local
 
 element_OBJECTS = element.o
@@ -59,7 +58,7 @@ check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(co
 	@echo "Checking $(config_test_BINARY)"
 	@./$(config_test_BINARY)
 
-install:
+install: $(main_BINARY)
 	@echo "Installing in ${PREFIX}"
 	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/todo
 
