@@ -205,7 +205,7 @@ void application::print_usage()
 void application::pretty_print_element(todo::element const & p_element)
 {
   if (m_parameters.m_monochrome) {
-    fprintf(stdout, "[%d] %s", p_element.m_index, p_element.m_title.c_str());
+    fprintf(stdout, "[%02d] %s", p_element.m_index, p_element.m_title.c_str());
     if (not p_element.m_body.empty())
       fprintf(stdout, " : %s", p_element.m_body.c_str());
 
