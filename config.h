@@ -16,6 +16,7 @@
 #define PRIORITY_LOW_COLOR      "priority_low_color"
 #define PRIORITY_DEFAULT_COLOR  "priority_default_color"
 #define PRIORITY_HIGH_COLOR     "priority_high_color"
+#define NOTE_SEARCH_COLOR       "note_search_color"
 #define FILE_NOTES_DB           "file_notes_db"
 #define FILE_CONFIG_FILE        "file_config_file"
 

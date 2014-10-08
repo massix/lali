@@ -15,11 +15,19 @@ int main()
 		l_collection.push_back(l_elem);
 	}
 
+  todo::element l_elem("note with searchable text", "and a body");
+  l_collection.push_back(l_elem);
+
 	std::stringstream l_stream;
 	l_collection.serialize(l_stream);
 	l_other_collection.deserialize(l_stream);
 
 	assert(l_collection == l_other_collection);
+
+  todo::collection l_result = l_other_collection.retrieve_notes_by_text("search");
+  assert(l_result.size() == 1);
+  assert(l_result[0].m_title == "note with $BEGIN$search$END$able text");
+
 	return 0;
 }
 

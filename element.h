@@ -22,9 +22,10 @@ class element
 		std::ostream & serialize   (std::ostream & p_stream) const;
 		std::istream & deserialize (std::istream & p_stream);
 
-		std::string m_title;
-		std::string m_body;
-		uint8_t    m_priority;
+		std::string  m_title;
+		std::string  m_body;
+		uint8_t      m_priority;
+    uint32_t     m_index;
 };
 
 }

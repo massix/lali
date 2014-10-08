@@ -10,4 +10,6 @@ config_tu
 todo
 *.gdb*
 core
-
+.clang_complete
+tags
+tags.*
