@@ -185,6 +185,7 @@ void application::print_usage()
   printf("     insert     | i <parameters>     insert a new note\n");
   printf("     modify     | m <parameters>     modify a given note\n");
   printf("     delete     | d <parameters>     delete a given note\n");
+  printf("     search     | s <parameters>     search for given text in notes\n");
   printf("\n");
   printf(" List of available parameters\n");
   printf("     --note     | -n id              specify the note id\n");
