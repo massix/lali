@@ -33,6 +33,7 @@ class application
 
         bool          m_filling_body;
         bool          m_verbose;
+        bool          m_monochrome;
     } m_parameters;
 
     enum {

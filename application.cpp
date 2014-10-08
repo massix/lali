@@ -23,7 +23,6 @@ application::application(int argc, char *argv[]) :
   m_colors["magenta"]   = "\x1b[35m";
   m_colors["cyan"]      = "\x1b[36m";
   m_colors["white"]     = "\x1b[37m";
-
 }
 
 application::~application()
@@ -70,6 +69,7 @@ bool application::fill_parameters(int argc, char *argv[])
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
+  m_parameters.m_monochrome = false;
   m_appname = std::string(argv[0]);
 
   while (argv[l_index]) {
@@ -121,6 +121,10 @@ bool application::fill_parameters(int argc, char *argv[])
     {
       if (++l_index < argc)
         m_parameters.m_tododb = std::string(argv[l_index]);
+    }
+    else if (l_param == "-m" or l_param == "--monochrome")
+    {
+      m_parameters.m_monochrome = true;
     }
 
     else if (not m_parameters.m_filling_body)
@@ -181,43 +185,62 @@ void application::print_usage()
   printf("   -[ Todo list version %s ]-\n", TODO_VERSION);
   printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
   printf("  List of available actions\n");
-  printf("       list     | l                  list all notes in the db\n");
-  printf("     insert     | i <parameters>     insert a new note\n");
-  printf("     modify     | m <parameters>     modify a given note\n");
-  printf("     delete     | d <parameters>     delete a given note\n");
-  printf("     search     | s <parameters>     search for given text in notes\n");
+  printf("         list   | l                  list all notes in the db\n");
+  printf("       insert   | i <parameters>     insert a new note\n");
+  printf("       modify   | m <parameters>     modify a given note\n");
+  printf("       delete   | d <parameters>     delete a given note\n");
+  printf("       search   | s <parameters>     search for given text in notes\n");
   printf("\n");
   printf(" List of available parameters\n");
-  printf("     --note     | -n id              specify the note id\n");
-  printf("    --title     | -t text            the text that follows is the title\n");
-  printf("     --body     | -b text            the text that follows is the body\n");
-  printf(" --priority     | -p id              priority of the new note\n");
-  printf("   --todorc     | -r file            use this todorc file\n");
-  printf("   --tododb     | -d file            use this db of notes\n");
-  printf("  --version     | -v                 print version and exit\n");
+  printf("       --note   | -n id              specify the note id\n");
+  printf("      --title   | -t text            the text that follows is the title\n");
+  printf("       --body   | -b text            the text that follows is the body\n");
+  printf(" --monochrome   | -m                 print a monochrome version\n");
+  printf("   --priority   | -p id              priority of the new note\n");
+  printf("     --todorc   | -r file            use this todorc file\n");
+  printf("     --tododb   | -d file            use this db of notes\n");
+  printf("    --version   | -v                 print version and exit\n");
 }
 
 void application::pretty_print_element(todo::element const & p_element)
 {
-  fprintf(stdout, "[%s] %s",
-      print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
-      print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
-  if (not p_element.m_body.empty())
-    fprintf(stdout, " : %s",
-        print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
+  if (m_parameters.m_monochrome) {
+    fprintf(stdout, "[%d] %s", p_element.m_index, p_element.m_title.c_str());
+    if (not p_element.m_body.empty())
+      fprintf(stdout, " : %s", p_element.m_body.c_str());
 
-  switch (p_element.m_priority) {
-    case 1:
-      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
-      break;
-    case 2:
-      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
-      break;
-    default:
-      fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
-      break;
+    switch (p_element.m_priority) {
+      case 1:
+        fprintf(stdout, " : %s\n", "medum priority");
+        break;
+      case 2:
+        fprintf(stdout, " : %s\n", "high priority");
+        break;
+      default:
+        fprintf(stdout, " : %s\n", "low priority");
+        break;
+    }
   }
+  else {
+    fprintf(stdout, "[%s] %s",
+        print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
+        print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
+    if (not p_element.m_body.empty())
+      fprintf(stdout, " : %s",
+          print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
+    switch (p_element.m_priority) {
+      case 1:
+        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
+        break;
+      case 2:
+        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
+        break;
+      default:
+        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
+        break;
+    }
+  }
 }
 
 int application::run()
@@ -239,7 +262,10 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
+  if (m_parameters.m_monochrome)
+    fprintf(stdout, "You have %lu todos\n", l_collection.size());
+  else
+    fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
   {
