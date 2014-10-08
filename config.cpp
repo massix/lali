@@ -18,6 +18,7 @@ config::config(std::string const & p_filename) :
   (*this)(NOTE_ID_COLOR) = "cyan";
   (*this)(NOTE_TITLE_COLOR) = "magenta";
   (*this)(NOTE_BODY_COLOR) = "gray";
+  (*this)(NOTE_SEARCH_COLOR) = "yellow";
   (*this)(PRIORITY_LOW_COLOR) = "green";
   (*this)(PRIORITY_DEFAULT_COLOR) = "yellow";
   (*this)(PRIORITY_HIGH_COLOR) = "red";
@@ -68,6 +69,11 @@ bool config::parse_config()
     else if (l_string.substr(0, strlen(NOTE_BODY_COLOR)) == NOTE_BODY_COLOR)
     {
       (*this)(NOTE_BODY_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+
+    else if (l_string.substr(0, strlen(NOTE_SEARCH_COLOR)) == NOTE_SEARCH_COLOR)
+    {
+      (*this)(NOTE_SEARCH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
 
     else if (l_string.substr(0, strlen(PRIORITY_LOW_COLOR)) == PRIORITY_LOW_COLOR)

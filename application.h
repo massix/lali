@@ -39,7 +39,8 @@ class application
       kInsert,
       kDelete,
       kModify,
-      kList
+      kList,
+      kSearch
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);

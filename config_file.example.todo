@@ -8,6 +8,7 @@ file_notes_db = /Users/myuser/notes.bin
 note_id_color = gray
 note_title_color = cyan
 note_body_color = green
+note_search_color = red
 
 # Priority colors
 

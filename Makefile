@@ -7,19 +7,19 @@ element_OBJECTS = element.o
 collection_OBJECTS = collection.o
 config_OBJECTS = config.o
 
-element_test_OBJECTS = element_test.o
+element_test_OBJECTS = element_test.o search.o
 element_test_BINARY  = element_tu
 
-collection_test_OBJECTS = collection_test.o
+collection_test_OBJECTS = collection_test.o search.o
 collection_test_BINARY = collection_tu
 
+file_test_OBJECTS = file_test.o search.o
 file_test_BINARY = file_tu
-file_test_OBJECTS = file_test.o
 
 config_test_BINARY = config_tu
 config_test_OBJECTS = config_test.o
 
-main_OBJECTS = main.o application.o
+main_OBJECTS = main.o application.o search.o
 main_BINARY = todo
 
 all: $(main_BINARY)

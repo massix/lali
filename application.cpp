@@ -148,6 +148,8 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kDelete;
   else if (m_parameters.m_action == "modify" or m_parameters.m_action == "m")
     m_action = kModify;
+  else if (m_parameters.m_action == "search" or m_parameters.m_action == "s")
+    m_action = kSearch;
   else if (m_parameters.m_action == "help" or
            m_parameters.m_action == "-h" or
            m_parameters.m_action == "--help" or
@@ -292,6 +294,16 @@ int application::run()
         return 127;
       }
 
+      break;
+    }
+    case kSearch:
+    {
+      todo::collection l_search = l_collection.retrieve_notes_by_text(m_parameters.m_title);
+      std::for_each(l_search.begin(), l_search.end(), [&](todo::element & l_element)->void {
+        l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, m_colors[(*m_config)[NOTE_SEARCH_COLOR]]);
+        l_element.m_title.replace(l_element.m_title.find("$END$"), 5, m_colors[(*m_config)[NOTE_TITLE_COLOR]]);
+        pretty_print_element(l_element);
+      });
       break;
     }
   }

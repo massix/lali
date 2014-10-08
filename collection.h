@@ -25,6 +25,7 @@ class collection : public std::vector<todo::element>
     void read_file();
 
     collection const & sort_by_priority(bool ascendent = false);
+    collection const & retrieve_notes_by_text(std::string const & l_word);
   protected:
     collection();
     void push_back_original(todo::element const & p_element);
@@ -32,6 +33,7 @@ class collection : public std::vector<todo::element>
 	private:
 		std::string   m_filename;
     collection *  m_sorted;
+    collection *  m_search_result;
 };
 
 }

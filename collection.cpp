@@ -1,4 +1,5 @@
 #include "collection.h"
+#include "search.h"
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -9,18 +10,19 @@
 using namespace todo;
 
 collection::collection(std::string const & p_filename) :
-	m_filename(p_filename), m_sorted(0)
+	m_filename(p_filename), m_sorted(0), m_search_result(0)
 {
 }
 
 collection::collection() :
-  m_sorted(0)
+  m_sorted(0), m_search_result(0)
 {
 }
 
 collection::~collection()
 {
   if (m_sorted) delete m_sorted;
+  if (m_search_result) delete m_search_result;
 }
 
 std::ostream & collection::serialize(std::ostream & p_stream) const
@@ -121,4 +123,33 @@ todo::collection const & collection::sort_by_priority(bool ascendent)
   }
 
   return *m_sorted;
+}
+
+todo::collection const & collection::retrieve_notes_by_text(std::string const & l_word)
+{
+  std::string l_word_lowercase;
+  std::for_each(l_word.begin(), l_word.end(),
+      [&](const char & n)->void { l_word_lowercase.push_back(::tolower(n));
+  });
+
+  if (m_search_result == 0)
+  {
+    m_search_result = new collection();
+    std::for_each(begin(), end(), [&](todo::element const & l_element)->void {
+      std::string l_title_lowercase;
+      std::for_each(l_element.m_title.begin(), l_element.m_title.end(), 
+          [&](const char & n)->void { l_title_lowercase.push_back(::tolower(n)); 
+      });
+      if (l_title_lowercase.find(l_word) != std::string::npos) {
+        todo::element l_creation = l_element;
+        l_creation.m_title = highlight_search_term(l_word, l_title_lowercase);
+        m_search_result->push_back(l_creation);
+
+        // Reset the index
+        (*m_search_result)[m_search_result->size()-1].m_index = l_element.m_index;
+      }
+    });
+  }
+
+  return *m_search_result;
 }
