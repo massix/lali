@@ -19,7 +19,7 @@ file_test_BINARY = file_tu
 config_test_BINARY = config_tu
 config_test_OBJECTS = config_test.o
 
-main_OBJECTS = main.o application.o search.o
+main_OBJECTS = main.o application.o search.o exporter.o txt_exporter.o
 main_BINARY = todo
 
 all: $(main_BINARY)

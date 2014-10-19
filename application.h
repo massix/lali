@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include "exporter.h"
 
 namespace todo
 {
@@ -14,6 +15,9 @@ class config;
 class application
 {
   private:
+    typedef std::map<std::string, exporter *> exporters_t;
+
+    exporters_t m_exporters;
     std::string m_appname;
     std::string m_error;
     std::map<std::string, std::string> m_colors;
@@ -35,6 +39,12 @@ class application
         bool          m_verbose;
         bool          m_monochrome;
         bool          m_confirmation;
+
+        struct exporter 
+        {
+          std::string m_file;
+          std::string m_type;
+        } m_exporter;
     } m_parameters;
 
     enum {
@@ -42,7 +52,8 @@ class application
       kDelete,
       kModify,
       kList,
-      kSearch
+      kSearch,
+      kExport
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);
