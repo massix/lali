@@ -196,6 +196,7 @@ void application::print_usage()
   printf("       modify   | m <parameters>     modify a given note\n");
   printf("       delete   | d <parameters>     delete a given note\n");
   printf("       search   | s <parameters>     search for given text in notes\n");
+  printf("       export   | e <parameters>     exports the current db in a different format\n");
   printf("\n");
   printf(" List of available parameters\n");
   printf("       --note   | -n id              specify the note id\n");
@@ -207,6 +208,16 @@ void application::print_usage()
   printf("     --tododb   | -d file            use this db of notes\n");
   printf("    --version   | -v                 print version and exit\n");
   printf("    --confirm   | -c                 ask for confirmation before deleting \n");
+  printf("\n");
+  printf(" List of available exporters\n");
+  printf("         txt    |                    text file exporter\n");
+  //printf("         xml    |                    XML file exporter\n");
+  //printf("        html    |                    HTML file exporter\n");
+  //printf("         csv    |                    CSV file exporter\n");
+  printf("\n");
+  printf(" List of parameters for exporting\n");
+  printf("     --output   | -o file            outputs to given file name\n");
+  printf("\n");
 }
 
 void application::pretty_print_element(todo::element const & p_element)
