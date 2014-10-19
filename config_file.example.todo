@@ -1,17 +1,17 @@
 # This is a comment
-
 file_config_file = test_file
 file_notes_db = /Users/myuser/notes.bin
 
-# Note colors
+# Some defaults
+always_ask_for_confirmation = true
 
+# Note colors
 note_id_color = gray
 note_title_color = cyan
 note_body_color = green
 note_search_color = red
 
 # Priority colors
-
 priority_low_color = black
 priority_default_color = white
 priority_high_color = blue

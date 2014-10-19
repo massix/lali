@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 using namespace todo;
 
@@ -70,6 +71,7 @@ bool application::fill_parameters(int argc, char *argv[])
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
   m_parameters.m_monochrome = false;
+  m_parameters.m_confirmation = false;
   m_appname = std::string(argv[0]);
 
   while (argv[l_index]) {
@@ -125,6 +127,10 @@ bool application::fill_parameters(int argc, char *argv[])
     else if (l_param == "-m" or l_param == "--monochrome")
     {
       m_parameters.m_monochrome = true;
+    }
+    else if (l_param == "-c" or l_param == "--confirm")
+    {
+      m_parameters.m_confirmation = true;
     }
 
     else if (not m_parameters.m_filling_body)
@@ -200,6 +206,7 @@ void application::print_usage()
   printf("     --todorc   | -r file            use this todorc file\n");
   printf("     --tododb   | -d file            use this db of notes\n");
   printf("    --version   | -v                 print version and exit\n");
+  printf("    --confirm   | -c                 ask for confirmation before deleting \n");
 }
 
 void application::pretty_print_element(todo::element const & p_element)
@@ -310,13 +317,27 @@ int application::run()
     }
     case kDelete:
     {
-      if (m_parameters.m_note_id < l_collection.size()) {
+      bool l_proceed(true);
+      if ((m_parameters.m_confirmation or m_config->isAskForConfirmation()) && m_parameters.m_note_id < l_collection.size())
+      {
+        std::string l_reply;
+        l_proceed = false;
+        fprintf(stdout, "Do you really want to %s the following note\n", print_color("red", "delete", true, true).c_str());
+        pretty_print_element(l_collection[m_parameters.m_note_id]);
+        fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
+            print_color("yellow", "Y", true, true).c_str(), print_color("yellow", "y", true, true).c_str());
+        std::cin >> l_reply;
+
+        if (l_reply == "y" or l_reply == "Y") l_proceed = true;
+      }
+
+      if (m_parameters.m_note_id < l_collection.size() && l_proceed) {
         l_collection.erase(l_collection.begin() + m_parameters.m_note_id);
         fprintf(stdout, "Note %s erased -- you now have %s notes\n",
             print_color("red", m_parameters.m_note_id).c_str(),
             print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
       }
-      else {
+      else if (l_proceed) {
         m_error = "Note out of range";
         print_usage();
         return 127;

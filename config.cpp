@@ -22,6 +22,7 @@ config::config(std::string const & p_filename) :
   (*this)(PRIORITY_LOW_COLOR) = "green";
   (*this)(PRIORITY_DEFAULT_COLOR) = "yellow";
   (*this)(PRIORITY_HIGH_COLOR) = "red";
+  (*this)(ALWAYS_ASK_CONFIRMATION) = "false";
 }
 
 bool config::parse_config()
@@ -90,6 +91,10 @@ bool config::parse_config()
     {
       (*this)(PRIORITY_HIGH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
+    else if (l_string.substr(0, strlen(ALWAYS_ASK_CONFIRMATION)) == ALWAYS_ASK_CONFIRMATION)
+    {
+      (*this)(ALWAYS_ASK_CONFIRMATION) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
 
     else
     {
@@ -112,4 +117,14 @@ std::string const & config::operator[](std::string const & p_key)
 std::string & config::operator()(std::string const & p_key)
 {
   return std::map<std::string, std::string>::operator[](p_key);
+}
+
+bool config::isAskForConfirmation()
+{
+  bool l_res(false);
+  std::string const & l_ask = (*this)[ALWAYS_ASK_CONFIRMATION];
+  if (l_ask == "true" or l_ask == "ok" or l_ask == "yes")
+    l_res = true;
+
+  return l_res;
 }

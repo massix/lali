@@ -34,6 +34,7 @@ class application
         bool          m_filling_body;
         bool          m_verbose;
         bool          m_monochrome;
+        bool          m_confirmation;
     } m_parameters;
 
     enum {
@@ -61,7 +62,7 @@ class application
     void pretty_print_element(todo::element const & p_element);
 
   public:
-		application(int argc, char *argv[]);
+    application(int argc, char *argv[]);
     virtual ~application();
     int run();
 };

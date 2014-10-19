@@ -22,6 +22,8 @@ int main()
   assert(l_config[PRIORITY_DEFAULT_COLOR] == "white");
   assert(l_config[PRIORITY_HIGH_COLOR] == "blue");
 
-	return 0;
+  assert(l_config.isAskForConfirmation() == true);
+
+  return 0;
 }
 

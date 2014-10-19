@@ -19,6 +19,7 @@
 #define NOTE_SEARCH_COLOR       "note_search_color"
 #define FILE_NOTES_DB           "file_notes_db"
 #define FILE_CONFIG_FILE        "file_config_file"
+#define ALWAYS_ASK_CONFIRMATION "always_ask_for_confirmation"
 
 namespace todo
 {
@@ -33,6 +34,7 @@ namespace todo
       config(std::string const & p_filename);
       bool parse_config();
       std::string const & operator[](std::string const & p_key);
+      bool                isAskForConfirmation();
 
     private:
       std::string & operator()(std::string const & p_key);
