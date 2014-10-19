@@ -2,6 +2,7 @@
 #include "application.h"
 #include "collection.h"
 #include "config.h"
+#include "txt_exporter.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -10,8 +11,7 @@
 
 using namespace todo;
 
-application::application(int argc, char *argv[]) :
-  status(fill_parameters(argc, argv))
+application::application(int argc, char *argv[])
 {
   m_colors["reset"]       = "\x1b[0m";
   m_colors["bright"]      = "\x1b[1m";
@@ -24,6 +24,10 @@ application::application(int argc, char *argv[]) :
   m_colors["magenta"]   = "\x1b[35m";
   m_colors["cyan"]      = "\x1b[36m";
   m_colors["white"]     = "\x1b[37m";
+
+  m_exporters["txt"]    = new txt_exporter();
+
+  status = fill_parameters(argc, argv);
 }
 
 application::~application()
@@ -133,6 +137,16 @@ bool application::fill_parameters(int argc, char *argv[])
       m_parameters.m_confirmation = true;
     }
 
+    else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
+    {
+      if (l_param == "-o" or l_param == "--output") {
+        if (++l_index < argc)
+          m_parameters.m_exporter.m_file = std::string(argv[l_index]);
+      }
+      else if (m_exporters.find(l_param) != m_exporters.end())
+        m_parameters.m_exporter.m_type = l_param;
+    }
+
     else if (not m_parameters.m_filling_body)
     {
       if (not m_parameters.m_title.empty())
@@ -161,6 +175,8 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kModify;
   else if (m_parameters.m_action == "search" or m_parameters.m_action == "s")
     m_action = kSearch;
+  else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
+    m_action = kExport;
   else if (m_parameters.m_action == "help" or
            m_parameters.m_action == "-h" or
            m_parameters.m_action == "--help" or
@@ -370,6 +386,21 @@ int application::run()
         }
         pretty_print_element(l_element);
       });
+      break;
+    }
+    case kExport:
+    {
+      if (not m_parameters.m_exporter.m_type.empty() and not m_parameters.m_exporter.m_file.empty()) {
+        exporter * l_exporter = m_exporters[m_parameters.m_exporter.m_type];
+        l_exporter->set_file(m_parameters.m_exporter.m_file);
+        l_exporter->init();
+        std::for_each(l_collection.begin(), l_collection.end(), [&](todo::element const & p_el)->void {
+          l_exporter->process_note(p_el);
+        });
+
+        l_exporter->finalize();
+      }
+
       break;
     }
   }

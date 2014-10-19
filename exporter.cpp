@@ -5,8 +5,8 @@
 
 using namespace todo;
 
-exporter::exporter(std::string const & p_file)
-  : m_filename(p_file), m_file_is_open(false)
+exporter::exporter()
+  : m_file_is_open(false)
 {
 }
 
@@ -31,4 +31,9 @@ bool exporter::open_file()
   }
 
   return l_ret;
+}
+
+void exporter::set_file(std::string const & p_filename)
+{
+  m_filename = p_filename;
 }

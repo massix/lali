@@ -16,9 +16,10 @@ class element;
 class exporter
 {
   public:
-    exporter(std::string const & p_file);
+    exporter();
     virtual ~exporter();
     bool init();
+    void set_file(std::string const & p_filename);
 
 
   protected:
@@ -30,12 +31,12 @@ class exporter
 
   // The following functions have to be overloaded by the exporters
   public:
-    virtual bool init_checks() = 0;
     virtual bool process_note(todo::element const & p_element) = 0;
     virtual bool finalize() = 0;
 
   protected:
     virtual bool check_file() = 0;
+    virtual bool init_checks() = 0;
 };
 
 }
