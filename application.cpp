@@ -262,9 +262,9 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  if (m_parameters.m_monochrome)
+  if (m_parameters.m_monochrome && m_action != kInsert)
     fprintf(stdout, "You have %lu todos\n", l_collection.size());
-  else
+  else if (m_action != kInsert)
     fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
