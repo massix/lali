@@ -40,6 +40,7 @@ class application
         bool          m_verbose;
         bool          m_monochrome;
         bool          m_confirmation;
+        bool          m_dryrun;
 
         struct exporter 
         {

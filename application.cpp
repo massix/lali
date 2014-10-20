@@ -86,6 +86,7 @@ bool application::fill_parameters(int argc, char *argv[])
   m_parameters.m_note_id = 1000;
   m_parameters.m_monochrome = false;
   m_parameters.m_confirmation = false;
+  m_parameters.m_dryrun = false;
   m_appname = std::string(argv[0]);
 
   while (argv[l_index]) {
@@ -146,7 +147,10 @@ bool application::fill_parameters(int argc, char *argv[])
     {
       m_parameters.m_confirmation = true;
     }
-
+    else if (l_param == "--dry-run")
+    {
+      m_parameters.m_dryrun = true;
+    }
     else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
     {
       if (l_param == "-o" or l_param == "--output") {
@@ -241,6 +245,7 @@ void application::print_usage()
     printf("     --tododb   | -d file            use this db of notes\n");
     printf("    --version   | -v                 print version and exit\n");
     printf("    --confirm   | -c                 ask for confirmation before deleting \n");
+    printf("    --dry-run   |                    do not modify the db\n");
     printf("\n");
     printf(" List of available exporters\n");
     printf("         txt    |                    text file exporter\n");
@@ -435,7 +440,7 @@ int application::run()
     }
   }
 
-  if (l_modify) l_collection.write_file();
+  if (l_modify and not m_parameters.m_dryrun) l_collection.write_file();
 
   return 0;
 }
