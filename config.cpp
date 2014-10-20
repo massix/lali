@@ -5,6 +5,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 
 using namespace todo;
@@ -31,6 +34,10 @@ bool config::parse_config()
   bool l_ret(true);
   char l_line[1024];
   uint8_t l_index(0);
+
+  struct stat l_stat;
+  if (stat(m_config_file.c_str(), &l_stat) == -1)
+    return false;
 
   // Open file
   std::ifstream l_file(m_config_file.c_str(), std::ifstream::in | std::ifstream::binary);

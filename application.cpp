@@ -80,7 +80,7 @@ bool application::fill_parameters(int argc, char *argv[])
 
   // Sane defaults
   m_parameters.m_filling_body = false;
-  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.todorc");
+  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.halirc");
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
@@ -203,7 +203,11 @@ bool application::fill_parameters(int argc, char *argv[])
 
   if (l_ret) {
     m_config = new config(m_parameters.m_todorc);
-    l_ret = m_config->parse_config();
+    if (not m_config->parse_config()) {
+      fprintf(stderr, "%s: missing configuration file in %s\n", 
+          print_color("red", "ERROR", true, true).c_str(),
+          print_color("yellow", m_parameters.m_todorc, true, true).c_str());
+    }
   }
 
   return l_ret;
@@ -214,7 +218,7 @@ void application::print_usage()
   if (not m_error.empty())
     std::cerr << m_error << std::endl;
 
-  printf("   -[ Todo list version %s ]-\n", TODO_VERSION);
+  printf("   -[ HALI list version %s ]-\n", TODO_VERSION);
   printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
   printf("  List of available actions\n");
   printf("         list   | l                  list all notes in the db\n");

@@ -20,7 +20,7 @@ config_test_BINARY = config_tu
 config_test_OBJECTS = config_test.o
 
 main_OBJECTS = main.o application.o search.o exporter.o txt_exporter.o
-main_BINARY = todo
+main_BINARY = hali
 
 all: $(main_BINARY)
 
@@ -60,11 +60,11 @@ check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(co
 
 install: $(main_BINARY)
 	@echo "Installing in ${PREFIX}"
-	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/todo
+	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/${main_BINARY}
 
 remove:
 	@echo "Removing from ${PREFIX}"
-	@rm -f ${PREFIX}/bin/todo
+	@rm -f ${PREFIX}/bin/${main_BINARY}
 
 clean:
 	@echo "Clean"
