@@ -204,9 +204,10 @@ bool application::fill_parameters(int argc, char *argv[])
   if (l_ret) {
     m_config = new config(m_parameters.m_todorc);
     if (not m_config->parse_config()) {
-      fprintf(stderr, "%s: missing configuration file in %s\n", 
-          print_color("red", "ERROR", true, true).c_str(),
-          print_color("yellow", m_parameters.m_todorc, true, true).c_str());
+      m_error += print_color("red", "ERROR", true, true);
+      m_error += ": missing configuration file in ";
+      m_error += print_color("yellow", m_parameters.m_todorc, true, true);
+      l_ret = false;
     }
   }
 
@@ -218,36 +219,39 @@ void application::print_usage()
   if (not m_error.empty())
     std::cerr << m_error << std::endl;
 
-  printf("   -[ HALI list version %s ]-\n", TODO_VERSION);
-  printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
-  printf("  List of available actions\n");
-  printf("         list   | l                  list all notes in the db\n");
-  printf("       insert   | i <parameters>     insert a new note\n");
-  printf("       modify   | m <parameters>     modify a given note\n");
-  printf("       delete   | d <parameters>     delete a given note\n");
-  printf("       search   | s <parameters>     search for given text in notes\n");
-  printf("       export   | e <parameters>     exports the current db in a different format\n");
-  printf("\n");
-  printf(" List of available parameters\n");
-  printf("       --note   | -n id              specify the note id\n");
-  printf("      --title   | -t text            the text that follows is the title\n");
-  printf("       --body   | -b text            the text that follows is the body\n");
-  printf(" --monochrome   | -m                 print a monochrome version\n");
-  printf("   --priority   | -p id              priority of the new note\n");
-  printf("     --todorc   | -r file            use this todorc file\n");
-  printf("     --tododb   | -d file            use this db of notes\n");
-  printf("    --version   | -v                 print version and exit\n");
-  printf("    --confirm   | -c                 ask for confirmation before deleting \n");
-  printf("\n");
-  printf(" List of available exporters\n");
-  printf("         txt    |                    text file exporter\n");
-  //printf("         xml    |                    XML file exporter\n");
-  //printf("        html    |                    HTML file exporter\n");
-  //printf("         csv    |                    CSV file exporter\n");
-  printf("\n");
-  printf(" List of parameters for exporting\n");
-  printf("     --output   | -o file            outputs to given file name\n");
-  printf("\n");
+  else
+  {
+    printf("     -[ HALI version %s ]-\n", TODO_VERSION);
+    printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
+    printf("  List of available actions\n");
+    printf("         list   | l                  list all notes in the db\n");
+    printf("       insert   | i <parameters>     insert a new note\n");
+    printf("       modify   | m <parameters>     modify a given note\n");
+    printf("       delete   | d <parameters>     delete a given note\n");
+    printf("       search   | s <parameters>     search for given text in notes\n");
+    printf("       export   | e <parameters>     exports the current db in a different format\n");
+    printf("\n");
+    printf(" List of available parameters\n");
+    printf("       --note   | -n id              specify the note id\n");
+    printf("      --title   | -t text            the text that follows is the title\n");
+    printf("       --body   | -b text            the text that follows is the body\n");
+    printf(" --monochrome   | -m                 print a monochrome version\n");
+    printf("   --priority   | -p id              priority of the new note\n");
+    printf("     --todorc   | -r file            use this todorc file\n");
+    printf("     --tododb   | -d file            use this db of notes\n");
+    printf("    --version   | -v                 print version and exit\n");
+    printf("    --confirm   | -c                 ask for confirmation before deleting \n");
+    printf("\n");
+    printf(" List of available exporters\n");
+    printf("         txt    |                    text file exporter\n");
+    //printf("         xml    |                    XML file exporter\n");
+    //printf("        html    |                    HTML file exporter\n");
+    //printf("         csv    |                    CSV file exporter\n");
+    printf("\n");
+    printf(" List of parameters for exporting\n");
+    printf("     --output   | -o file            outputs to given file name\n");
+    printf("\n");
+  }
 }
 
 void application::pretty_print_element(todo::element const & p_element)

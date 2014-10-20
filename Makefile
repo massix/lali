@@ -61,6 +61,7 @@ check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(co
 install: $(main_BINARY)
 	@echo "Installing in ${PREFIX}"
 	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/${main_BINARY}
+	@echo "Do not forget to copy config_file.example.todo to ${HOME}/.halirc"
 
 remove:
 	@echo "Removing from ${PREFIX}"
