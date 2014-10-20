@@ -321,10 +321,17 @@ int application::run()
   {
     case kList:
     {
-      todo::collection const & l_sorted = l_collection.sort_by_priority();
-      todo::collection::const_iterator l_iterator = l_sorted.begin();
-      for (uint32_t l_idx = 0; l_iterator != l_sorted.end(); ++l_iterator, l_idx++) {
-        pretty_print_element(*l_iterator);
+      if (m_parameters.m_priority > 2) {
+        todo::collection const & l_sorted = l_collection.sort_by_priority();
+        std::for_each(l_sorted.begin(), l_sorted.end(), [&](todo::element const & p_element)->void {
+          pretty_print_element(p_element);
+        });
+      }
+      else {
+        todo::collection const & l_priority = l_collection.retrieve_notes_by_priority(m_parameters.m_priority);
+        std::for_each(l_priority.begin(), l_priority.end(), [&](todo::element const & p_element)->void {
+          pretty_print_element(p_element);
+        });
       }
       break;
     }
@@ -432,19 +439,19 @@ int application::run()
 bool application::ask_for_confirmation(todo::collection const & p_collection, std::string const & p_text)
 {
   bool l_res(true);
-  if ((m_parameters.m_confirmation or 
-      m_config->isAskForConfirmation()) and 
+  if ((m_parameters.m_confirmation or
+      m_config->isAskForConfirmation()) and
       m_parameters.m_note_id < p_collection.size())
   {
     std::string l_reply;
     l_res = false;
-    fprintf(stdout, "Do you really want to %s the following note\n", 
+    fprintf(stdout, "Do you really want to %s the following note\n",
         print_color("yellow", p_text, true, true).c_str());
 
     pretty_print_element(p_collection[m_parameters.m_note_id]);
 
     fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
-        print_color("yellow", "Y", true, true).c_str(), 
+        print_color("yellow", "Y", true, true).c_str(),
         print_color("yellow", "y", true, true).c_str());
 
     std::cin >> l_reply;
