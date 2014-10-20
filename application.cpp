@@ -329,7 +329,22 @@ int application::run()
       break;
     }
     case kModify:
-      if (m_parameters.m_note_id < l_collection.size()) {
+    {
+      bool l_proceed(true);
+      if ((m_parameters.m_note_id < l_collection.size()) and
+          (m_parameters.m_confirmation or m_config->isAskForConfirmation()))
+      {
+        l_proceed = false;
+        std::string l_reply;
+        fprintf(stdout, "Do you really want to %s modify the following note\n", print_color("yellow", "modify", true, true).c_str());
+        pretty_print_element(l_collection[m_parameters.m_note_id]);
+        fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
+            print_color("yellow", "Y", true, true).c_str(), print_color("yellow", "y", true, true).c_str());
+        std::cin >> l_reply;
+        if (l_reply == "y" or l_reply == "Y") l_proceed = true;
+      }
+
+      if (m_parameters.m_note_id < l_collection.size() and l_proceed) {
         todo::element & l_element = l_collection[m_parameters.m_note_id];
         if (m_parameters.m_priority < 3)
           l_element.m_priority = m_parameters.m_priority;
@@ -343,12 +358,14 @@ int application::run()
 
         pretty_print_element(l_element);
       }
-      else {
+      else if (m_parameters.m_note_id >= l_collection.size()) {
         m_error = "Note out of range";
         print_usage();
         return 127;
       }
+
       break;
+    }
     case kInsert:
     {
       todo::element l_element(m_parameters.m_title, m_parameters.m_body);
