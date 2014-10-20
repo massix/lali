@@ -312,6 +312,7 @@ int application::run()
   else
     l_db = m_parameters.m_tododb;
 
+  bool l_modify(false);
   todo::collection l_collection(l_db);
   l_collection.read_file();
   if (m_action != kInsert)
@@ -352,6 +353,7 @@ int application::run()
 
 
         pretty_print_element(l_element);
+        l_modify = true;
       }
       else if (l_proceed) {
         m_error = "Note out of range";
@@ -368,6 +370,7 @@ int application::run()
         l_element.m_priority = m_parameters.m_priority;
       l_collection.push_back(l_element);
       pretty_print_element(l_element);
+      l_modify = true;
       break;
     }
     case kDelete:
@@ -379,6 +382,7 @@ int application::run()
         fprintf(stdout, "Note %s erased -- you now have %s notes\n",
             print_color("red", m_parameters.m_note_id).c_str(),
             print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
+        l_modify = true;
       }
       else if (l_proceed) {
         m_error = "Note out of range";
@@ -431,7 +435,7 @@ int application::run()
     }
   }
 
-  l_collection.write_file();
+  if (l_modify) l_collection.write_file();
 
   return 0;
 }
