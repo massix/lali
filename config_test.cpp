@@ -23,6 +23,7 @@ int main()
   assert(l_config[PRIORITY_HIGH_COLOR] == "blue");
 
   assert(l_config.isAskForConfirmation() == true);
+  assert(l_config.isMonochrome() == true);
 
   return 0;
 }

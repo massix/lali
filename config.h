@@ -20,6 +20,7 @@
 #define FILE_NOTES_DB           "file_notes_db"
 #define FILE_CONFIG_FILE        "file_config_file"
 #define ALWAYS_ASK_CONFIRMATION "always_ask_for_confirmation"
+#define MONOCHROME              "monochrome"
 
 namespace todo
 {
@@ -35,10 +36,12 @@ namespace todo
       bool parse_config();
       std::string const & operator[](std::string const & p_key);
       bool                isAskForConfirmation();
+      bool                isMonochrome();
 
     private:
       std::string & operator()(std::string const & p_key);
       std::string m_config_file;
+      bool        isKeyTrue(std::string const & p_key);
   };
 }
 

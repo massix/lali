@@ -38,11 +38,16 @@ application::~application()
 std::string application::print_color(std::string const & l_color, std::string const & l_string, bool bright, bool underline)
 {
   std::string ret;
-  if (underline) ret += m_colors["underscore"];
-  if (bright) ret += m_colors["bright"];
-  ret += m_colors[l_color];
+  if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
+    if (underline) ret += m_colors["underscore"];
+    if (bright) ret += m_colors["bright"];
+    ret += m_colors[l_color];
+  }
+
   ret += l_string;
-  ret += m_colors["reset"];
+
+  if (not m_parameters.m_monochrome and not m_config->isMonochrome())
+    ret += m_colors["reset"];
 
   return ret;
 }
@@ -52,11 +57,16 @@ std::string application::print_color(std::string const & l_color, int l_number, 
   char l_buffer[1024] = { 0 };
   sprintf(l_buffer, "%02d", l_number);
   std::string ret;
-  if (underline) ret += m_colors["underscore"];
-  if (bright) ret += m_colors["bright"];
-  ret += m_colors[l_color];
+  if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
+    if (underline) ret += m_colors["underscore"];
+    if (bright) ret += m_colors["bright"];
+    ret += m_colors[l_color];
+  }
+
   ret += std::string(l_buffer);
-  ret += m_colors["reset"];
+
+  if (not m_parameters.m_monochrome and not m_config->isMonochrome())
+    ret += m_colors["reset"];
 
   return ret;
 }
@@ -296,9 +306,7 @@ int application::run()
 
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  if (m_parameters.m_monochrome && m_action != kInsert)
-    fprintf(stdout, "You have %lu todos\n", l_collection.size());
-  else if (m_action != kInsert)
+  if (m_action != kInsert)
     fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
@@ -376,7 +384,7 @@ int application::run()
     {
       todo::collection l_search = l_collection.retrieve_notes_by_text(m_parameters.m_title);
       std::for_each(l_search.begin(), l_search.end(), [&](todo::element & l_element)->void {
-        if (not m_parameters.m_monochrome) {
+        if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
           l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, m_colors[(*m_config)[NOTE_SEARCH_COLOR]]);
           l_element.m_title.replace(l_element.m_title.find("$END$"), 5, m_colors[(*m_config)[NOTE_TITLE_COLOR]]);
         }

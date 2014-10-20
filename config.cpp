@@ -14,15 +14,16 @@ config::config(std::string const & p_filename) :
 {
   // Sane defaults
 
-  (*this)(NOTE_COUNT_COLOR) = "red";
-  (*this)(NOTE_ID_COLOR) = "cyan";
-  (*this)(NOTE_TITLE_COLOR) = "magenta";
-  (*this)(NOTE_BODY_COLOR) = "gray";
-  (*this)(NOTE_SEARCH_COLOR) = "yellow";
-  (*this)(PRIORITY_LOW_COLOR) = "green";
-  (*this)(PRIORITY_DEFAULT_COLOR) = "yellow";
-  (*this)(PRIORITY_HIGH_COLOR) = "red";
-  (*this)(ALWAYS_ASK_CONFIRMATION) = "false";
+  (*this)(NOTE_COUNT_COLOR)         = "red";
+  (*this)(NOTE_ID_COLOR)            = "cyan";
+  (*this)(NOTE_TITLE_COLOR)         = "magenta";
+  (*this)(NOTE_BODY_COLOR)          = "gray";
+  (*this)(NOTE_SEARCH_COLOR)        = "yellow";
+  (*this)(PRIORITY_LOW_COLOR)       = "green";
+  (*this)(PRIORITY_DEFAULT_COLOR)   = "yellow";
+  (*this)(PRIORITY_HIGH_COLOR)      = "red";
+  (*this)(ALWAYS_ASK_CONFIRMATION)  = "false";
+  (*this)(MONOCHROME)               = "false";
 }
 
 bool config::parse_config()
@@ -95,6 +96,10 @@ bool config::parse_config()
     {
       (*this)(ALWAYS_ASK_CONFIRMATION) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
+    else if (l_string.substr(0, strlen(MONOCHROME)) == MONOCHROME)
+    {
+      (*this)(MONOCHROME) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
 
     else
     {
@@ -119,12 +124,22 @@ std::string & config::operator()(std::string const & p_key)
   return std::map<std::string, std::string>::operator[](p_key);
 }
 
-bool config::isAskForConfirmation()
+bool config::isKeyTrue(std::string const & p_key)
 {
   bool l_res(false);
-  std::string const & l_ask = (*this)[ALWAYS_ASK_CONFIRMATION];
+  std::string const & l_ask = (*this)[p_key];
   if (l_ask == "true" or l_ask == "ok" or l_ask == "yes")
     l_res = true;
 
   return l_res;
+}
+
+bool config::isAskForConfirmation()
+{
+  return isKeyTrue(ALWAYS_ASK_CONFIRMATION);
+}
+
+bool config::isMonochrome()
+{
+  return isKeyTrue(MONOCHROME);
 }
