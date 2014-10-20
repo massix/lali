@@ -92,7 +92,7 @@ bool application::fill_parameters(int argc, char *argv[])
   while (argv[l_index]) {
     std::string l_param(argv[l_index]);
 
-    if (m_parameters.m_action.empty())
+    if (m_parameters.m_action.empty() and l_param[0] != '-')
       m_parameters.m_action = l_param;
 
     else if (l_param == "-h" or l_param == "--help" or l_param == "-v" or l_param == "--version")
