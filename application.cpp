@@ -92,7 +92,7 @@ bool application::fill_parameters(int argc, char *argv[])
   while (argv[l_index]) {
     std::string l_param(argv[l_index]);
 
-    if (m_parameters.m_action.empty() and l_param[0] != '-')
+    if (l_index == 1 and m_parameters.m_action.empty() and l_param[0] != '-')
       m_parameters.m_action = l_param;
 
     else if (l_param == "-h" or l_param == "--help" or l_param == "-v" or l_param == "--version")
@@ -197,6 +197,10 @@ bool application::fill_parameters(int argc, char *argv[])
            m_parameters.m_action == "-v" or
            m_parameters.m_action == "--version") {
     l_ret = false;
+  }
+  else if (m_parameters.m_action.empty() and not m_parameters.m_title.empty())
+  {
+    m_action = kInsert;
   }
 
   if (m_action == kInsert and m_parameters.m_title.empty())
