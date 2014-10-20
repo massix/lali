@@ -330,19 +330,7 @@ int application::run()
     }
     case kModify:
     {
-      bool l_proceed(true);
-      if ((m_parameters.m_note_id < l_collection.size()) and
-          (m_parameters.m_confirmation or m_config->isAskForConfirmation()))
-      {
-        l_proceed = false;
-        std::string l_reply;
-        fprintf(stdout, "Do you really want to %s modify the following note\n", print_color("yellow", "modify", true, true).c_str());
-        pretty_print_element(l_collection[m_parameters.m_note_id]);
-        fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
-            print_color("yellow", "Y", true, true).c_str(), print_color("yellow", "y", true, true).c_str());
-        std::cin >> l_reply;
-        if (l_reply == "y" or l_reply == "Y") l_proceed = true;
-      }
+      bool l_proceed(ask_for_confirmation(l_collection, "modify"));
 
       if (m_parameters.m_note_id < l_collection.size() and l_proceed) {
         todo::element & l_element = l_collection[m_parameters.m_note_id];
@@ -358,7 +346,7 @@ int application::run()
 
         pretty_print_element(l_element);
       }
-      else if (m_parameters.m_note_id >= l_collection.size()) {
+      else if (l_proceed) {
         m_error = "Note out of range";
         print_usage();
         return 127;
@@ -377,19 +365,7 @@ int application::run()
     }
     case kDelete:
     {
-      bool l_proceed(true);
-      if ((m_parameters.m_confirmation or m_config->isAskForConfirmation()) && m_parameters.m_note_id < l_collection.size())
-      {
-        std::string l_reply;
-        l_proceed = false;
-        fprintf(stdout, "Do you really want to %s the following note\n", print_color("red", "delete", true, true).c_str());
-        pretty_print_element(l_collection[m_parameters.m_note_id]);
-        fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
-            print_color("yellow", "Y", true, true).c_str(), print_color("yellow", "y", true, true).c_str());
-        std::cin >> l_reply;
-
-        if (l_reply == "y" or l_reply == "Y") l_proceed = true;
-      }
+      bool l_proceed(ask_for_confirmation(l_collection, "delete"));
 
       if (m_parameters.m_note_id < l_collection.size() && l_proceed) {
         l_collection.erase(l_collection.begin() + m_parameters.m_note_id);
@@ -451,4 +427,30 @@ int application::run()
   l_collection.write_file();
 
   return 0;
+}
+
+bool application::ask_for_confirmation(todo::collection const & p_collection, std::string const & p_text)
+{
+  bool l_res(true);
+  if ((m_parameters.m_confirmation or 
+      m_config->isAskForConfirmation()) and 
+      m_parameters.m_note_id < p_collection.size())
+  {
+    std::string l_reply;
+    l_res = false;
+    fprintf(stdout, "Do you really want to %s the following note\n", 
+        print_color("yellow", p_text, true, true).c_str());
+
+    pretty_print_element(p_collection[m_parameters.m_note_id]);
+
+    fprintf(stdout, "%s/%s to confirm, any other key to abort: ",
+        print_color("yellow", "Y", true, true).c_str(), 
+        print_color("yellow", "y", true, true).c_str());
+
+    std::cin >> l_reply;
+
+    if (l_reply == "y" or l_reply == "Y") l_res = true;
+  }
+
+  return l_res;
 }

@@ -11,6 +11,7 @@
 namespace todo
 {
 class config;
+class collection;
 
 class application
 {
@@ -71,6 +72,8 @@ class application
                            bool underline = false);
 
     void pretty_print_element(todo::element const & p_element);
+
+    bool ask_for_confirmation(todo::collection const & p_collection, std::string const & p_text);
 
   public:
     application(int argc, char *argv[]);
