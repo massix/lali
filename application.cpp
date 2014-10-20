@@ -391,17 +391,27 @@ int application::run()
     case kSearch:
     {
       todo::collection l_search = l_collection.retrieve_notes_by_text(m_parameters.m_title);
-      std::for_each(l_search.begin(), l_search.end(), [&](todo::element & l_element)->void {
-        if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
-          l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, m_colors[(*m_config)[NOTE_SEARCH_COLOR]]);
-          l_element.m_title.replace(l_element.m_title.find("$END$"), 5, m_colors[(*m_config)[NOTE_TITLE_COLOR]]);
-        }
-        else {
-          l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, "");
-          l_element.m_title.replace(l_element.m_title.find("$END$"), 5, "");
-        }
-        pretty_print_element(l_element);
-      });
+      if (l_search.empty()) {
+        m_error += print_color("yellow", "WARNING", true, false);
+        m_error += ": the search for ";
+        m_error += print_color("yellow", m_parameters.m_title);
+        m_error += " didn't return any result.";
+        print_usage();
+        return 0;
+      }
+      else {
+        std::for_each(l_search.begin(), l_search.end(), [&](todo::element & l_element)->void {
+          if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
+            l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, m_colors[(*m_config)[NOTE_SEARCH_COLOR]]);
+            l_element.m_title.replace(l_element.m_title.find("$END$"), 5, m_colors[(*m_config)[NOTE_TITLE_COLOR]]);
+          }
+          else {
+            l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, "");
+            l_element.m_title.replace(l_element.m_title.find("$END$"), 5, "");
+          }
+          pretty_print_element(l_element);
+        });
+      }
       break;
     }
     case kExport:
