@@ -16,16 +16,16 @@ application::application(int argc, char *argv[])
   m_colors["reset"]       = "\x1b[0m";
   m_colors["bright"]      = "\x1b[1m";
   m_colors["underscore"]  = "\x1b[4m";
-  m_colors["black"]     = "\x1b[30m";
-  m_colors["red"]       = "\x1b[31m";
-  m_colors["green"]     = "\x1b[32m";
-  m_colors["yellow"]    = "\x1b[33m";
-  m_colors["blue"]      = "\x1b[34m";
-  m_colors["magenta"]   = "\x1b[35m";
-  m_colors["cyan"]      = "\x1b[36m";
-  m_colors["white"]     = "\x1b[37m";
+  m_colors["black"]       = "\x1b[30m";
+  m_colors["red"]         = "\x1b[31m";
+  m_colors["green"]       = "\x1b[32m";
+  m_colors["yellow"]      = "\x1b[33m";
+  m_colors["blue"]        = "\x1b[34m";
+  m_colors["magenta"]     = "\x1b[35m";
+  m_colors["cyan"]        = "\x1b[36m";
+  m_colors["white"]       = "\x1b[37m";
 
-  m_exporters["txt"]    = new txt_exporter();
+  m_exporters["txt"]      = new txt_exporter();
 
   status = fill_parameters(argc, argv);
 }
