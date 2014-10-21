@@ -25,8 +25,12 @@ config::config(std::string const & p_filename) :
   (*this)(PRIORITY_LOW_COLOR)       = "green";
   (*this)(PRIORITY_DEFAULT_COLOR)   = "yellow";
   (*this)(PRIORITY_HIGH_COLOR)      = "red";
+  (*this)(PRIORITY_LOW_TEXT)        = "low priority";
+  (*this)(PRIORITY_DEFAULT_TEXT)    = "medium priority";
+  (*this)(PRIORITY_HIGH_TEXT)       = "high priority";
   (*this)(ALWAYS_ASK_CONFIRMATION)  = "false";
   (*this)(MONOCHROME)               = "false";
+  (*this)(LIST_FORMAT)              = "   $ID$   $TITLE$$IF_BODY$ ($BODY$)$END_IF_BODY$ [$PRIORITY_TEXT$]";
 }
 
 bool config::parse_config()
@@ -54,50 +58,57 @@ bool config::parse_config()
     {
       (*this)(FILE_CONFIG_FILE) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(FILE_NOTES_DB)) == FILE_NOTES_DB)
     {
       (*this)(FILE_NOTES_DB) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(NOTE_COUNT_COLOR)) == NOTE_COUNT_COLOR)
     {
       (*this)(NOTE_COUNT_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(NOTE_ID_COLOR)) == NOTE_ID_COLOR)
     {
       (*this)(NOTE_ID_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(NOTE_TITLE_COLOR)) == NOTE_TITLE_COLOR)
     {
       (*this)(NOTE_TITLE_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(NOTE_BODY_COLOR)) == NOTE_BODY_COLOR)
     {
       (*this)(NOTE_BODY_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(NOTE_SEARCH_COLOR)) == NOTE_SEARCH_COLOR)
     {
       (*this)(NOTE_SEARCH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(PRIORITY_LOW_COLOR)) == PRIORITY_LOW_COLOR)
     {
       (*this)(PRIORITY_LOW_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(PRIORITY_DEFAULT_COLOR)) == PRIORITY_DEFAULT_COLOR)
     {
       (*this)(PRIORITY_DEFAULT_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
     else if (l_string.substr(0, strlen(PRIORITY_HIGH_COLOR)) == PRIORITY_HIGH_COLOR)
     {
       (*this)(PRIORITY_HIGH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(PRIORITY_LOW_TEXT)) == PRIORITY_LOW_TEXT)
+    {
+      (*this)(PRIORITY_LOW_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(PRIORITY_DEFAULT_TEXT)) == PRIORITY_DEFAULT_TEXT)
+    {
+      (*this)(PRIORITY_DEFAULT_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(PRIORITY_HIGH_TEXT)) == PRIORITY_HIGH_TEXT)
+    {
+      (*this)(PRIORITY_HIGH_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(LIST_FORMAT)) == LIST_FORMAT)
+    {
+      (*this)(LIST_FORMAT) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
     else if (l_string.substr(0, strlen(ALWAYS_ASK_CONFIRMATION)) == ALWAYS_ASK_CONFIRMATION)
     {

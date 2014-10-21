@@ -6,6 +6,9 @@ file_notes_db = /Users/myuser/notes.bin
 always_ask_for_confirmation = true
 monochrome = yes
 
+# Format to be used when using action 'list'
+list_format = [$ID$] $TITLE$ $IF_BODY$: $BODY$ :$END_IF_BODY$ $PRIORITY_TEXT$
+
 # Note colors
 note_id_color = gray
 note_title_color = cyan
@@ -16,5 +19,10 @@ note_search_color = red
 priority_low_color = black
 priority_default_color = white
 priority_high_color = blue
+
+# Priority texts
+priority_low_text = doesn't matter
+priority_default_text = look at it
+priority_high_text = do it now!
 
 # This is another comment

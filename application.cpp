@@ -111,6 +111,12 @@ bool application::fill_parameters(int argc, char *argv[])
       }
     }
 
+    else if (l_param == "-f" or l_param == "--format")
+    {
+      if (++l_index < argc)
+        m_parameters.m_format = std::string(argv[l_index]);
+    }
+
     else if (l_param == "-b" or l_param == "--body")
       m_parameters.m_filling_body = true;
 
@@ -217,6 +223,7 @@ bool application::fill_parameters(int argc, char *argv[])
       m_error += print_color("yellow", m_parameters.m_todorc, true, true);
       l_ret = false;
     }
+    if (m_parameters.m_format.empty()) m_parameters.m_format = (*m_config)[LIST_FORMAT];
   }
 
   return l_ret;
@@ -240,6 +247,7 @@ void application::print_usage()
     printf("       export   | e <parameters>     exports the current db in a different format\n");
     printf("\n");
     printf(" List of available parameters\n");
+    printf("     --format   | -f <format>        format to use (see documentation)\n");
     printf("       --note   | -n id              specify the note id\n");
     printf("      --title   | -t text            the text that follows is the title\n");
     printf("       --body   | -b text            the text that follows is the body\n");
@@ -265,43 +273,68 @@ void application::print_usage()
 
 void application::pretty_print_element(todo::element const & p_element)
 {
+  // Create the format
+  std::string l_format = m_parameters.m_format;
+  if (m_parameters.m_monochrome)
+    l_format.replace(l_format.find("$ID$"), 4, "%02d");
+  else
+    l_format.replace(l_format.find("$ID$"), 4, "%s");
+
+  l_format.replace(l_format.find("$BODY$"), 6, "%s");
+  l_format.replace(l_format.find("$TITLE$"), 7, "%s");
+  l_format.replace(l_format.find("$PRIORITY_TEXT$"), 15, "%s");
+
+  std::string l_body = l_format.substr(
+      l_format.find("$IF_BODY$") + 9,
+      (l_format.find("$END_IF_BODY$") - (l_format.find("$IF_BODY$") + 9)));
+  std::string l_prebody = l_format.substr(0, l_format.find("$IF_BODY$"));
+  std::string l_postbody = l_format.substr(l_format.find("$END_IF_BODY$") + 13);
+
   if (m_parameters.m_monochrome) {
-    fprintf(stdout, "[%02d] %s", p_element.m_index, p_element.m_title.c_str());
+    fprintf(stdout, l_prebody.c_str(), p_element.m_index, p_element.m_title.c_str());
     if (not p_element.m_body.empty())
-      fprintf(stdout, " : %s", p_element.m_body.c_str());
+      fprintf(stdout, l_body.c_str(), p_element.m_body.c_str());
 
     switch (p_element.m_priority) {
       case 1:
-        fprintf(stdout, " : %s\n", "medum priority");
+        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_DEFAULT_TEXT].c_str());
         break;
       case 2:
-        fprintf(stdout, " : %s\n", "high priority");
+        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_HIGH_TEXT].c_str());
         break;
       default:
-        fprintf(stdout, " : %s\n", "low priority");
+        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_LOW_TEXT].c_str());
         break;
     }
   }
   else {
-    fprintf(stdout, "[%s] %s",
+    fprintf(stdout, l_prebody.c_str(),
         print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
         print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
     if (not p_element.m_body.empty())
-      fprintf(stdout, " : %s",
+      fprintf(stdout, l_body.c_str(),
           print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
     switch (p_element.m_priority) {
       case 1:
-        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_DEFAULT_COLOR], "medium priority").c_str());
+        fprintf(stdout,
+            l_postbody.c_str(),
+            print_color((*m_config)[PRIORITY_DEFAULT_COLOR], (*m_config)[PRIORITY_DEFAULT_TEXT]).c_str());
         break;
       case 2:
-        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_HIGH_COLOR], "high priority", true, true).c_str());
+        fprintf(stdout,
+            l_postbody.c_str(),
+            print_color((*m_config)[PRIORITY_HIGH_COLOR], (*m_config)[PRIORITY_HIGH_TEXT], true, true).c_str());
         break;
       default:
-        fprintf(stdout, " : %s\n", print_color((*m_config)[PRIORITY_LOW_COLOR], "low priority").c_str());
+        fprintf(stdout,
+            l_postbody.c_str(),
+            print_color((*m_config)[PRIORITY_LOW_COLOR], (*m_config)[PRIORITY_LOW_TEXT]).c_str());
         break;
     }
   }
+
+  fprintf(stdout, "\n");
 }
 
 int application::run()

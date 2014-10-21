@@ -32,6 +32,7 @@ class application
 
         std::string   m_body;
         std::string   m_title;
+        std::string   m_format;
         uint32_t      m_priority;
 
         uint32_t      m_note_id;

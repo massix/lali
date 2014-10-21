@@ -16,11 +16,15 @@
 #define PRIORITY_LOW_COLOR      "priority_low_color"
 #define PRIORITY_DEFAULT_COLOR  "priority_default_color"
 #define PRIORITY_HIGH_COLOR     "priority_high_color"
+#define PRIORITY_LOW_TEXT       "priority_low_text"
+#define PRIORITY_HIGH_TEXT      "priority_high_text"
+#define PRIORITY_DEFAULT_TEXT   "priority_default_text"
 #define NOTE_SEARCH_COLOR       "note_search_color"
 #define FILE_NOTES_DB           "file_notes_db"
 #define FILE_CONFIG_FILE        "file_config_file"
 #define ALWAYS_ASK_CONFIRMATION "always_ask_for_confirmation"
 #define MONOCHROME              "monochrome"
+#define LIST_FORMAT             "list_format"
 
 namespace todo
 {
