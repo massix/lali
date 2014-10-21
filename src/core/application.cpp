@@ -80,7 +80,7 @@ bool application::fill_parameters(int argc, char *argv[])
 
   // Sane defaults
   m_parameters.m_filling_body = false;
-  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.halirc");
+  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
@@ -271,7 +271,7 @@ void application::print_usage()
 
   else
   {
-    printf("     -[ HALI version %s ]-\n", TODO_VERSION);
+    printf("     -[ LALI version %s ]-\n", TODO_VERSION);
     printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
     printf("  List of available actions\n");
     printf("         list   | l                  list all notes in the db\n");

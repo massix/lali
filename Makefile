@@ -3,7 +3,7 @@ SUBDIRS  = src
 
 .PHONY: src clean check
 
-all: src hali
+all: src lali
 
 src:
 	$(MAKE) -C src
@@ -15,14 +15,14 @@ clean:
 check: src
 	$(MAKE) check -C tests
 
-hali: src
-	$(MAKE) hali -C src
+lali: src
+	$(MAKE) lali -C src
 
-install: hali
+install: lali
 	@echo "Installing in ${PREFIX}"
-	@/usr/bin/install -m 0755 src/hali ${PREFIX}/bin/hali
-	@echo "Do not forget to copy ./config_file.example.todo to ${HOME}/.halirc"
+	@/usr/bin/install -m 0755 src/lali ${PREFIX}/bin/lali
+	@echo "Do not forget to copy ./config_file.example.todo to ${HOME}/.lalirc"
 
 remove:
 	@echo "Removing from ${PREFIX}"
-	@rm -f ${PREFIX}/bin/hali
+	@rm -f ${PREFIX}/bin/lali

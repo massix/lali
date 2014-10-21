@@ -1,6 +1,6 @@
 include ../Include.make
 SUBDIRS = core element exporters
-TARGET  = hali
+TARGET  = lali
 target_OBJECTS = main.o
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -Ielement -Iexporters -Icore
 LDFLAGS  = -Lcore -lcore -Lelement -lelement -Lexporters -lexporter
