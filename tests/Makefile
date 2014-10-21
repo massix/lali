@@ -32,5 +32,5 @@ check: ${collection_test} ${config_test} ${file_test} ${element_test}
 	./${element_test}
 
 clean:
-	rm -f *.o ${collection_test} ${config_test} ${element_test} ${file_test}
+	rm -f *.o ${collection_test} ${config_test} ${element_test} ${file_test} *.bin
 
