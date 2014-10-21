@@ -10,6 +10,7 @@
 #include <map>
 
 #define NOTE_ID_COLOR           "note_id_color"
+#define NOTE_ID_FORMAT          "note_id_format"
 #define NOTE_TITLE_COLOR        "note_title_color"
 #define NOTE_COUNT_COLOR        "note_count_color"
 #define NOTE_BODY_COLOR         "note_body_color"

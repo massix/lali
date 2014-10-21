@@ -55,7 +55,7 @@ std::string application::print_color(std::string const & l_color, std::string co
 std::string application::print_color(std::string const & l_color, int l_number, bool bright, bool underline)
 {
   char l_buffer[1024] = { 0 };
-  sprintf(l_buffer, "%02d", l_number);
+  sprintf(l_buffer, (*m_config)[NOTE_ID_FORMAT].c_str(), l_number);
   std::string ret;
   if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
     if (underline) ret += m_colors["underscore"];
@@ -276,7 +276,7 @@ void application::pretty_print_element(todo::element const & p_element)
   // Create the format
   std::string l_format = m_parameters.m_format;
   if (m_parameters.m_monochrome)
-    l_format.replace(l_format.find("$ID$"), 4, "%02d");
+    l_format.replace(l_format.find("$ID$"), 4, (*m_config)[NOTE_ID_FORMAT]);
   else
     l_format.replace(l_format.find("$ID$"), 4, "%s");
 
