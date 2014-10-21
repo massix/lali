@@ -6,7 +6,7 @@
 
 int main()
 {
-  todo::config l_config("config_file.example.todo");
+  todo::config l_config("../config_file.example.todo");
   assert(l_config.parse_config() == true);
 
   assert(l_config[FILE_CONFIG_FILE] == "test_file");
