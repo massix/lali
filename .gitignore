@@ -8,6 +8,7 @@ element_tu
 file_tu
 config_tu
 todo
+hali
 *.gdb*
 core
 .clang_complete

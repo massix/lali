@@ -26,6 +26,7 @@ class collection : public std::vector<todo::element>
 
     collection const & sort_by_priority(bool ascendent = false);
     collection const & retrieve_notes_by_text(std::string const & l_word);
+    collection const & retrieve_notes_by_priority(uint32_t p_priority);
   protected:
     collection();
     void push_back_original(todo::element const & p_element);

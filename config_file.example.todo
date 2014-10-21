@@ -1,19 +1,31 @@
 # This is a comment
-
 file_config_file = test_file
 file_notes_db = /Users/myuser/notes.bin
 
-# Note colors
+# Some defaults
+always_ask_for_confirmation = true
+monochrome = yes
 
+# Note colors
 note_id_color = gray
 note_title_color = cyan
 note_body_color = green
 note_search_color = red
 
-# Priority colors
+# Note format is a valid printf format!
+note_id_format = 0x%04X
 
+# Format to be used when using action 'list'
+list_format = [$ID$] $TITLE$ $IF_BODY$: $BODY$ :$END_IF_BODY$ $PRIORITY_TEXT$
+
+# Priority colors
 priority_low_color = black
 priority_default_color = white
 priority_high_color = blue
+
+# Priority texts
+priority_low_text = doesn't matter
+priority_default_text = look at it
+priority_high_text = do it now!
 
 # This is another comment

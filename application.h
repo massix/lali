@@ -6,14 +6,19 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include "exporter.h"
 
 namespace todo
 {
 class config;
+class collection;
 
 class application
 {
   private:
+    typedef std::map<std::string, exporter *> exporters_t;
+
+    exporters_t m_exporters;
     std::string m_appname;
     std::string m_error;
     std::map<std::string, std::string> m_colors;
@@ -27,12 +32,22 @@ class application
 
         std::string   m_body;
         std::string   m_title;
+        std::string   m_format;
         uint32_t      m_priority;
 
         uint32_t      m_note_id;
 
         bool          m_filling_body;
         bool          m_verbose;
+        bool          m_monochrome;
+        bool          m_confirmation;
+        bool          m_dryrun;
+
+        struct exporter 
+        {
+          std::string m_file;
+          std::string m_type;
+        } m_exporter;
     } m_parameters;
 
     enum {
@@ -40,7 +55,8 @@ class application
       kDelete,
       kModify,
       kList,
-      kSearch
+      kSearch,
+      kExport
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);
@@ -59,8 +75,10 @@ class application
 
     void pretty_print_element(todo::element const & p_element);
 
+    bool ask_for_confirmation(todo::collection const & p_collection, std::string const & p_text);
+
   public:
-		application(int argc, char *argv[]);
+    application(int argc, char *argv[]);
     virtual ~application();
     int run();
 };
