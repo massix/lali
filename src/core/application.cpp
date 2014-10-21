@@ -223,8 +223,43 @@ bool application::fill_parameters(int argc, char *argv[])
       m_error += print_color("yellow", m_parameters.m_todorc, true, true);
       l_ret = false;
     }
+
+    // Check consistency of the format
     if (m_parameters.m_format.empty()) m_parameters.m_format = (*m_config)[LIST_FORMAT];
+
+    std::string & l_format = m_parameters.m_format;
+    if (l_format.empty() or
+      (l_format.find("@ID@") == std::string::npos) or
+      (l_format.find("@TITLE@") == std::string::npos) or
+      (l_format.find("@BODY@") == std::string::npos) or
+      (l_format.find("@IF_BODY@") == std::string::npos) or
+      (l_format.find("@END_IF_BODY@") == std::string::npos) or
+      (l_format.find("@PRIORITY_TEXT@") == std::string::npos))
+    {
+      l_ret = false;
+      m_error = print_color("red", "FORMAT IS INVALID !", true, true);
+    }
+    else
+    {
+      std::size_t l_idPos = l_format.find("@ID@");
+      std::size_t l_titlePos = l_format.find("@TITLE@");
+      std::size_t l_if_bodyPos = l_format.find("@IF_BODY@");
+      std::size_t l_bodyPos = l_format.find("@BODY@");
+      std::size_t l_end_if_bodyPos = l_format.find("@END_IF_BODY@");
+      std::size_t l_priorityPos = l_format.find("@PRIORITY_TEXT@");
+
+      if ((l_idPos > l_titlePos) or
+          (l_if_bodyPos > l_bodyPos) or
+          (l_bodyPos > l_end_if_bodyPos) or
+          (l_end_if_bodyPos > l_priorityPos))
+      {
+        m_error = print_color("red", "ORDER IN FORMAT IS INVALID !", true, true);
+        l_ret = false;
+      }
+    }
+
   }
+
 
   return l_ret;
 }
