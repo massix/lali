@@ -1,3 +1,23 @@
+//
+//           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+//                   Version 2, December 2004
+//
+// Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+//
+// Software :
+// Copyright (C) 2014 Massimo Gengarelli <massimo.gengarelli@gmail.com>
+//
+// Everyone is permitted to copy and distribute verbatim or modified
+// copies of this license document, and changing it is allowed as long
+// as the name is changed.
+//
+//            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+//   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+//
+//  0. You just DO WHAT THE FUCK YOU WANT TO.
+//
+
+
 #include "element.h"
 #include "application.h"
 #include "collection.h"
@@ -80,7 +100,7 @@ bool application::fill_parameters(int argc, char *argv[])
 
   // Sane defaults
   m_parameters.m_filling_body = false;
-  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.halirc");
+  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
@@ -223,8 +243,43 @@ bool application::fill_parameters(int argc, char *argv[])
       m_error += print_color("yellow", m_parameters.m_todorc, true, true);
       l_ret = false;
     }
+
+    // Check consistency of the format
     if (m_parameters.m_format.empty()) m_parameters.m_format = (*m_config)[LIST_FORMAT];
+
+    std::string & l_format = m_parameters.m_format;
+    if (l_format.empty() or
+      (l_format.find("@ID@") == std::string::npos) or
+      (l_format.find("@TITLE@") == std::string::npos) or
+      (l_format.find("@BODY@") == std::string::npos) or
+      (l_format.find("@IF_BODY@") == std::string::npos) or
+      (l_format.find("@END_IF_BODY@") == std::string::npos) or
+      (l_format.find("@PRIORITY_TEXT@") == std::string::npos))
+    {
+      l_ret = false;
+      m_error = print_color("red", "FORMAT IS INVALID !", true, true);
+    }
+    else
+    {
+      std::size_t l_idPos = l_format.find("@ID@");
+      std::size_t l_titlePos = l_format.find("@TITLE@");
+      std::size_t l_if_bodyPos = l_format.find("@IF_BODY@");
+      std::size_t l_bodyPos = l_format.find("@BODY@");
+      std::size_t l_end_if_bodyPos = l_format.find("@END_IF_BODY@");
+      std::size_t l_priorityPos = l_format.find("@PRIORITY_TEXT@");
+
+      if ((l_idPos > l_titlePos) or
+          (l_if_bodyPos > l_bodyPos) or
+          (l_bodyPos > l_end_if_bodyPos) or
+          (l_end_if_bodyPos > l_priorityPos))
+      {
+        m_error = print_color("red", "ORDER IN FORMAT IS INVALID !", true, true);
+        l_ret = false;
+      }
+    }
+
   }
+
 
   return l_ret;
 }
@@ -236,7 +291,7 @@ void application::print_usage()
 
   else
   {
-    printf("     -[ HALI version %s ]-\n", TODO_VERSION);
+    printf("     -[ LALI version %s ]-\n", TODO_VERSION);
     printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
     printf("  List of available actions\n");
     printf("         list   | l                  list all notes in the db\n");
@@ -276,19 +331,19 @@ void application::pretty_print_element(todo::element const & p_element)
   // Create the format
   std::string l_format = m_parameters.m_format;
   if (m_parameters.m_monochrome)
-    l_format.replace(l_format.find("$ID$"), 4, (*m_config)[NOTE_ID_FORMAT]);
+    l_format.replace(l_format.find("@ID@"), 4, (*m_config)[NOTE_ID_FORMAT]);
   else
-    l_format.replace(l_format.find("$ID$"), 4, "%s");
+    l_format.replace(l_format.find("@ID@"), 4, "%s");
 
-  l_format.replace(l_format.find("$BODY$"), 6, "%s");
-  l_format.replace(l_format.find("$TITLE$"), 7, "%s");
-  l_format.replace(l_format.find("$PRIORITY_TEXT$"), 15, "%s");
+  l_format.replace(l_format.find("@BODY@"), 6, "%s");
+  l_format.replace(l_format.find("@TITLE@"), 7, "%s");
+  l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, "%s");
 
   std::string l_body = l_format.substr(
-      l_format.find("$IF_BODY$") + 9,
-      (l_format.find("$END_IF_BODY$") - (l_format.find("$IF_BODY$") + 9)));
-  std::string l_prebody = l_format.substr(0, l_format.find("$IF_BODY$"));
-  std::string l_postbody = l_format.substr(l_format.find("$END_IF_BODY$") + 13);
+      l_format.find("@IF_BODY@") + 9,
+      (l_format.find("@END_IF_BODY@") - (l_format.find("@IF_BODY@") + 9)));
+  std::string l_prebody = l_format.substr(0, l_format.find("@IF_BODY@"));
+  std::string l_postbody = l_format.substr(l_format.find("@END_IF_BODY@") + 13);
 
   if (m_parameters.m_monochrome) {
     fprintf(stdout, l_prebody.c_str(), p_element.m_index, p_element.m_title.c_str());

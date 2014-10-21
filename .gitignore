@@ -8,9 +8,11 @@ element_tu
 file_tu
 config_tu
 todo
-hali
+lali
 *.gdb*
-core
+./core
 .clang_complete
 tags
 tags.*
+**/tags
+*.a

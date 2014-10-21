@@ -1,3 +1,23 @@
+//
+//           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+//                   Version 2, December 2004
+//
+// Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+//
+// Software :
+// Copyright (C) 2014 Massimo Gengarelli <massimo.gengarelli@gmail.com>
+//
+// Everyone is permitted to copy and distribute verbatim or modified
+// copies of this license document, and changing it is allowed as long
+// as the name is changed.
+//
+//            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+//   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+//
+//  0. You just DO WHAT THE FUCK YOU WANT TO.
+//
+
+
 #include "config.h"
 #include <strings.h>
 #include <string.h>
@@ -31,7 +51,7 @@ config::config(std::string const & p_filename) :
   (*this)(PRIORITY_HIGH_TEXT)       = "high priority";
   (*this)(ALWAYS_ASK_CONFIRMATION)  = "false";
   (*this)(MONOCHROME)               = "false";
-  (*this)(LIST_FORMAT)              = "   $ID$   $TITLE$$IF_BODY$ ($BODY$)$END_IF_BODY$ [$PRIORITY_TEXT$]";
+  (*this)(LIST_FORMAT)              = "   @ID@   @TITLE@@IF_BODY@ (@BODY@)@END_IF_BODY@ [@PRIORITY_TEXT@]";
 }
 
 bool config::parse_config()

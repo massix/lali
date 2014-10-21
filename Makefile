@@ -1,62 +1,28 @@
-VERSION  = 0.4.0
-CXX      = clang++
-CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11
-PREFIX   = /usr/local
+include ./Include.make
+SUBDIRS  = src
 
-element_OBJECTS = element.o
-collection_OBJECTS = collection.o
-config_OBJECTS = config.o
+.PHONY: src clean check
 
-element_test_OBJECTS = element_test.o search.o
-element_test_BINARY  = element_tu
+all: src lali
 
-collection_test_OBJECTS = collection_test.o search.o
-collection_test_BINARY = collection_tu
+src:
+	$(MAKE) -C src
 
-file_test_OBJECTS = file_test.o search.o
-file_test_BINARY = file_tu
+clean:
+	$(MAKE) clean -C src
+	$(MAKE) clean -C tests
 
-config_test_BINARY = config_tu
-config_test_OBJECTS = config_test.o
+check: src
+	$(MAKE) check -C tests
 
-main_OBJECTS = main.o application.o search.o exporter.o txt_exporter.o
-main_BINARY = hali
+lali: src
+	$(MAKE) lali -C src
 
-all: $(main_BINARY)
-
-.cpp.o: %.cpp
-	$(CXX) $(CXXFLAGS) -I. -c -o $@ $?
-
-$(config_test_BINARY): $(config_OBJECTS) $(config_test_OBJECTS)
-	$(CXX) -o $@ $+
-
-$(element_test_BINARY): $(element_OBJECTS) $(element_test_OBJECTS)
-	$(CXX) -o $@ $+
-
-$(collection_test_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(collection_test_OBJECTS)
-	$(CXX) -o $@ $+
-
-$(file_test_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(file_test_OBJECTS)
-	$(CXX) -o $@ $+
-
-$(main_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(config_OBJECTS) $(main_OBJECTS)
-	$(CXX) -o $@ $+
-
-check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(config_test_BINARY)
-	./$(element_test_BINARY)
-	./$(collection_test_BINARY)
-	./$(file_test_BINARY)
-	./$(config_test_BINARY)
-
-install: $(main_BINARY)
+install: lali
 	@echo "Installing in ${PREFIX}"
-	@/usr/bin/install -m 0755 $(main_BINARY) ${PREFIX}/bin/${main_BINARY}
-	@echo "Do not forget to copy config_file.example.todo to ${HOME}/.halirc"
+	@/usr/bin/install -m 0755 src/lali ${PREFIX}/bin/lali
+	@echo "Do not forget to copy ./config_file.example.todo to ${HOME}/.lalirc"
 
 remove:
 	@echo "Removing from ${PREFIX}"
-	@rm -f ${PREFIX}/bin/${main_BINARY}
-
-clean:
-	@echo "Clean"
-	rm -f *.o *.bin $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(main_BINARY) $(config_test_BINARY)
+	@rm -f ${PREFIX}/bin/lali
