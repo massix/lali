@@ -27,7 +27,7 @@ int main()
   assert(l_config[PRIORITY_DEFAULT_TEXT] == "look at it");
   assert(l_config[PRIORITY_HIGH_TEXT] == "do it now!");
 
-  assert(l_config[LIST_FORMAT] == "[$ID$] $TITLE$ $IF_BODY$: $BODY$ :$END_IF_BODY$ $PRIORITY_TEXT$");
+  assert(l_config[LIST_FORMAT] == "[@ID@] @TITLE@ @IF_BODY@: @BODY@ :@END_IF_BODY@ @PRIORITY_TEXT@");
 
   assert(l_config.isAskForConfirmation() == true);
   assert(l_config.isMonochrome() == true);

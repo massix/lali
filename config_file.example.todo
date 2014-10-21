@@ -16,7 +16,7 @@ note_search_color = red
 note_id_format = 0x%04X
 
 # Format to be used when using action 'list'
-list_format = [$ID$] $TITLE$ $IF_BODY$: $BODY$ :$END_IF_BODY$ $PRIORITY_TEXT$
+list_format = [@ID@] @TITLE@ @IF_BODY@: @BODY@ :@END_IF_BODY@ @PRIORITY_TEXT@
 
 # Priority colors
 priority_low_color = black
