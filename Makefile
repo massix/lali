@@ -1,5 +1,5 @@
 VERSION  = 0.3.1dev
-CXX      = g++
+CXX      = clang++
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11
 PREFIX   = /usr/local
 
@@ -25,38 +25,28 @@ main_BINARY = hali
 all: $(main_BINARY)
 
 .cpp.o: %.cpp
-	@$(CXX) $(CXXFLAGS) -I. -c -o $@ $?
-	@echo "CXX $?"
+	$(CXX) $(CXXFLAGS) -I. -c -o $@ $?
 
 $(config_test_BINARY): $(config_OBJECTS) $(config_test_OBJECTS)
-	@$(CXX) -o $@ $+
-	@echo "LD $@ -- ${VERSION}"
+	$(CXX) -o $@ $+
 
 $(element_test_BINARY): $(element_OBJECTS) $(element_test_OBJECTS)
-	@$(CXX) -o $@ $+
-	@echo "LD $@ -- ${VERSION}"
+	$(CXX) -o $@ $+
 
 $(collection_test_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(collection_test_OBJECTS)
-	@$(CXX) -o $@ $+
-	@echo "LD $@ -- ${VERSION}"
+	$(CXX) -o $@ $+
 
 $(file_test_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(file_test_OBJECTS)
-	@$(CXX) -o $@ $+
-	@echo "LD $@ -- ${VERSION}"
+	$(CXX) -o $@ $+
 
 $(main_BINARY): $(collection_OBJECTS) $(element_OBJECTS) $(config_OBJECTS) $(main_OBJECTS)
-	@$(CXX) -o $@ $+
-	@echo "LD $@ -- ${VERSION}"
+	$(CXX) -o $@ $+
 
 check: $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(config_test_BINARY)
-	@echo "Checking $(element_test_BINARY)"
-	@./$(element_test_BINARY)
-	@echo "Checking $(collection_test_BINARY)"
-	@./$(collection_test_BINARY)
-	@echo "Checking $(file_test_BINARY)"
-	@./$(file_test_BINARY)
-	@echo "Checking $(config_test_BINARY)"
-	@./$(config_test_BINARY)
+	./$(element_test_BINARY)
+	./$(collection_test_BINARY)
+	./$(file_test_BINARY)
+	./$(config_test_BINARY)
 
 install: $(main_BINARY)
 	@echo "Installing in ${PREFIX}"
@@ -69,4 +59,4 @@ remove:
 
 clean:
 	@echo "Clean"
-	@rm -f *.o *.bin $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(main_BINARY) $(config_test_BINARY)
+	rm -f *.o *.bin $(collection_test_BINARY) $(element_test_BINARY) $(file_test_BINARY) $(main_BINARY) $(config_test_BINARY)
