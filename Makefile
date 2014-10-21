@@ -1,4 +1,4 @@
-VERSION  = 0.4.0
+VERSION  = 0.4.0dev
 CXX      = clang++
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11
 PREFIX   = /usr/local
