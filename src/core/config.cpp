@@ -51,6 +51,7 @@ config::config(std::string const & p_filename) :
   (*this)(PRIORITY_HIGH_TEXT)       = "high priority";
   (*this)(ALWAYS_ASK_CONFIRMATION)  = "false";
   (*this)(MONOCHROME)               = "false";
+  (*this)(PRINT_COUNTER)            = "true";
   (*this)(LIST_FORMAT)              = "   @ID@   @TITLE@@IF_BODY@ (@BODY@)@END_IF_BODY@ [@PRIORITY_TEXT@]";
 }
 
@@ -139,6 +140,10 @@ bool config::parse_config()
     {
       (*this)(ALWAYS_ASK_CONFIRMATION) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
+    else if (l_string.substr(0, strlen(PRINT_COUNTER)) == PRINT_COUNTER)
+    {
+      (*this)(PRINT_COUNTER) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
     else if (l_string.substr(0, strlen(MONOCHROME)) == MONOCHROME)
     {
       (*this)(MONOCHROME) = l_string.substr(l_string.find('=') + 2, l_string.size());
@@ -185,4 +190,9 @@ bool config::isAskForConfirmation()
 bool config::isMonochrome()
 {
   return isKeyTrue(MONOCHROME);
+}
+
+bool config::isCounterPrintable()
+{
+  return isKeyTrue(PRINT_COUNTER);
 }

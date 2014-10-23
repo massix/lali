@@ -46,6 +46,7 @@
 #define ALWAYS_ASK_CONFIRMATION "always_ask_for_confirmation"
 #define MONOCHROME              "monochrome"
 #define LIST_FORMAT             "list_format"
+#define PRINT_COUNTER           "print_counter"
 
 namespace todo
 {
@@ -62,6 +63,7 @@ namespace todo
       std::string const & operator[](std::string const & p_key);
       bool                isAskForConfirmation();
       bool                isMonochrome();
+      bool                isCounterPrintable();
 
     private:
       std::string & operator()(std::string const & p_key);

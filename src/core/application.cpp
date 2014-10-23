@@ -204,7 +204,7 @@ bool application::fill_parameters(int argc, char *argv[])
     l_index++;
   }
 
-  m_action = kList;
+  m_action = kInsert;
 
   // Choose the proper action
   if (m_parameters.m_action == "insert" or m_parameters.m_action == "i")
@@ -217,6 +217,8 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kSearch;
   else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
     m_action = kExport;
+  else if (m_parameters.m_action == "list" or m_parameters.m_action == "l" or m_parameters.m_action.empty())
+    m_action = kList;
   else if (m_parameters.m_action == "help" or
            m_parameters.m_action == "-h" or
            m_parameters.m_action == "--help" or
@@ -224,9 +226,10 @@ bool application::fill_parameters(int argc, char *argv[])
            m_parameters.m_action == "--version") {
     l_ret = false;
   }
-  else if (m_parameters.m_action.empty() and not m_parameters.m_title.empty())
+  else
   {
-    m_action = kInsert;
+    m_parameters.m_title = m_parameters.m_action + " " + m_parameters.m_title;
+    m_parameters.m_action = "insert";
   }
 
   if (m_action == kInsert and m_parameters.m_title.empty())
@@ -259,25 +262,6 @@ bool application::fill_parameters(int argc, char *argv[])
       l_ret = false;
       m_error = print_color("red", "FORMAT IS INVALID !", true, true);
     }
-    else
-    {
-      std::size_t l_idPos = l_format.find("@ID@");
-      std::size_t l_titlePos = l_format.find("@TITLE@");
-      std::size_t l_if_bodyPos = l_format.find("@IF_BODY@");
-      std::size_t l_bodyPos = l_format.find("@BODY@");
-      std::size_t l_end_if_bodyPos = l_format.find("@END_IF_BODY@");
-      std::size_t l_priorityPos = l_format.find("@PRIORITY_TEXT@");
-
-      if ((l_idPos > l_titlePos) or
-          (l_if_bodyPos > l_bodyPos) or
-          (l_bodyPos > l_end_if_bodyPos) or
-          (l_end_if_bodyPos > l_priorityPos))
-      {
-        m_error = print_color("red", "ORDER IN FORMAT IS INVALID !", true, true);
-        l_ret = false;
-      }
-    }
-
   }
 
 
@@ -330,66 +314,47 @@ void application::pretty_print_element(todo::element const & p_element)
 {
   // Create the format
   std::string l_format = m_parameters.m_format;
-  if (m_parameters.m_monochrome)
-    l_format.replace(l_format.find("@ID@"), 4, (*m_config)[NOTE_ID_FORMAT]);
-  else
-    l_format.replace(l_format.find("@ID@"), 4, "%s");
+  char l_id[1024]        = {0};
+  char l_title[1024]     = {0};
+  char l_body[1024]      = {0};
+  char l_priority[1024]  = {0};
 
-  l_format.replace(l_format.find("@BODY@"), 6, "%s");
-  l_format.replace(l_format.find("@TITLE@"), 7, "%s");
-  l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, "%s");
+  sprintf(l_id, "%s", print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str());
+  sprintf(l_title, "%s", print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
+  sprintf(l_body, "%s", print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
-  std::string l_body = l_format.substr(
-      l_format.find("@IF_BODY@") + 9,
-      (l_format.find("@END_IF_BODY@") - (l_format.find("@IF_BODY@") + 9)));
-  std::string l_prebody = l_format.substr(0, l_format.find("@IF_BODY@"));
-  std::string l_postbody = l_format.substr(l_format.find("@END_IF_BODY@") + 13);
+  switch (p_element.m_priority) {
+    case 1:
+      sprintf(l_priority,
+          "%s",
+          print_color((*m_config)[PRIORITY_DEFAULT_COLOR], (*m_config)[PRIORITY_DEFAULT_TEXT]).c_str());
+      break;
+    case 2:
+      sprintf(l_priority,
+          "%s",
+          print_color((*m_config)[PRIORITY_HIGH_COLOR], (*m_config)[PRIORITY_HIGH_TEXT], true, true).c_str());
+      break;
+    default:
+      sprintf(l_priority,
+          "%s",
+          print_color((*m_config)[PRIORITY_LOW_COLOR], (*m_config)[PRIORITY_LOW_TEXT]).c_str());
+      break;
+  }
 
-  if (m_parameters.m_monochrome) {
-    fprintf(stdout, l_prebody.c_str(), p_element.m_index, p_element.m_title.c_str());
-    if (not p_element.m_body.empty())
-      fprintf(stdout, l_body.c_str(), p_element.m_body.c_str());
-
-    switch (p_element.m_priority) {
-      case 1:
-        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_DEFAULT_TEXT].c_str());
-        break;
-      case 2:
-        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_HIGH_TEXT].c_str());
-        break;
-      default:
-        fprintf(stdout, l_postbody.c_str(), (*m_config)[PRIORITY_LOW_TEXT].c_str());
-        break;
-    }
+  l_format.replace(l_format.find("@ID@"), 4, l_id);
+  l_format.replace(l_format.find("@BODY@"), 6, l_body);
+  l_format.replace(l_format.find("@TITLE@"), 7, l_title);
+  l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, l_priority);
+  if (p_element.m_body.empty()) {
+    l_format.replace(l_format.find("@IF_BODY@"), 
+        l_format.find("@END_IF_BODY@") - l_format.find("@IF_BODY@") + 13, "");
   }
   else {
-    fprintf(stdout, l_prebody.c_str(),
-        print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
-        print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
-    if (not p_element.m_body.empty())
-      fprintf(stdout, l_body.c_str(),
-          print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
-
-    switch (p_element.m_priority) {
-      case 1:
-        fprintf(stdout,
-            l_postbody.c_str(),
-            print_color((*m_config)[PRIORITY_DEFAULT_COLOR], (*m_config)[PRIORITY_DEFAULT_TEXT]).c_str());
-        break;
-      case 2:
-        fprintf(stdout,
-            l_postbody.c_str(),
-            print_color((*m_config)[PRIORITY_HIGH_COLOR], (*m_config)[PRIORITY_HIGH_TEXT], true, true).c_str());
-        break;
-      default:
-        fprintf(stdout,
-            l_postbody.c_str(),
-            print_color((*m_config)[PRIORITY_LOW_COLOR], (*m_config)[PRIORITY_LOW_TEXT]).c_str());
-        break;
-    }
+    l_format.replace(l_format.find("@IF_BODY@"), 9, ""); 
+    l_format.replace(l_format.find("@END_IF_BODY@"), 13, ""); 
   }
 
-  fprintf(stdout, "\n");
+  fprintf(stdout, "%s\n", l_format.c_str());
 }
 
 int application::run()
@@ -412,7 +377,7 @@ int application::run()
   bool l_modify(false);
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  if (m_action != kInsert)
+  if (m_action != kInsert and m_config->isCounterPrintable())
     fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
