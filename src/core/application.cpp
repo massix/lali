@@ -311,44 +311,47 @@ void application::pretty_print_element(todo::element const & p_element)
 {
   // Create the format
   std::string l_format = m_parameters.m_format;
+  char l_id[1024]        = {0};
+  char l_title[1024]     = {0};
+  char l_body[1024]      = {0};
+  char l_priority[1024]  = {0};
 
-  l_format.replace(l_format.find("@ID@"), 4, "%s");
-  l_format.replace(l_format.find("@BODY@"), 6, "%s");
-  l_format.replace(l_format.find("@TITLE@"), 7, "%s");
-  l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, "%s");
-
-  std::string l_body = l_format.substr(
-      l_format.find("@IF_BODY@") + 9,
-      (l_format.find("@END_IF_BODY@") - (l_format.find("@IF_BODY@") + 9)));
-  std::string l_prebody = l_format.substr(0, l_format.find("@IF_BODY@"));
-  std::string l_postbody = l_format.substr(l_format.find("@END_IF_BODY@") + 13);
-
-  fprintf(stdout, l_prebody.c_str(),
-      print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str(),
-      print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
-  if (not p_element.m_body.empty())
-    fprintf(stdout, l_body.c_str(),
-        print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
+  sprintf(l_id, "%s", print_color((*m_config)[NOTE_ID_COLOR], p_element.m_index).c_str());
+  sprintf(l_title, "%s", print_color((*m_config)[NOTE_TITLE_COLOR], p_element.m_title).c_str());
+  sprintf(l_body, "%s", print_color((*m_config)[NOTE_BODY_COLOR], p_element.m_body).c_str());
 
   switch (p_element.m_priority) {
     case 1:
-      fprintf(stdout,
-          l_postbody.c_str(),
+      sprintf(l_priority,
+          "%s",
           print_color((*m_config)[PRIORITY_DEFAULT_COLOR], (*m_config)[PRIORITY_DEFAULT_TEXT]).c_str());
       break;
     case 2:
-      fprintf(stdout,
-          l_postbody.c_str(),
+      sprintf(l_priority,
+          "%s",
           print_color((*m_config)[PRIORITY_HIGH_COLOR], (*m_config)[PRIORITY_HIGH_TEXT], true, true).c_str());
       break;
     default:
-      fprintf(stdout,
-          l_postbody.c_str(),
+      sprintf(l_priority,
+          "%s",
           print_color((*m_config)[PRIORITY_LOW_COLOR], (*m_config)[PRIORITY_LOW_TEXT]).c_str());
       break;
   }
 
-  fprintf(stdout, "\n");
+  l_format.replace(l_format.find("@ID@"), 4, l_id);
+  l_format.replace(l_format.find("@BODY@"), 6, l_body);
+  l_format.replace(l_format.find("@TITLE@"), 7, l_title);
+  l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, l_priority);
+  if (p_element.m_body.empty()) {
+    l_format.replace(l_format.find("@IF_BODY@"), 
+        l_format.find("@END_IF_BODY@") - l_format.find("@IF_BODY@") + 13, "");
+  }
+  else {
+    l_format.replace(l_format.find("@IF_BODY@"), 9, ""); 
+    l_format.replace(l_format.find("@END_IF_BODY@"), 13, ""); 
+  }
+
+  fprintf(stdout, "%s\n", l_format.c_str());
 }
 
 int application::run()
