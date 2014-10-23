@@ -51,6 +51,7 @@ int main()
 
   assert(l_config.isAskForConfirmation() == true);
   assert(l_config.isMonochrome() == true);
+  assert(l_config.isCounterPrintable() == false);
 
   return 0;
 }

@@ -377,7 +377,7 @@ int application::run()
   bool l_modify(false);
   todo::collection l_collection(l_db);
   l_collection.read_file();
-  if (m_action != kInsert)
+  if (m_action != kInsert and m_config->isCounterPrintable())
     fprintf(stdout, "You have %s todos\n", print_color((*m_config)[NOTE_COUNT_COLOR], l_collection.size()).c_str());
 
   switch (m_action)
