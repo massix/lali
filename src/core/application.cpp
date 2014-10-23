@@ -368,7 +368,7 @@ int application::run()
 
   if (m_parameters.m_tododb.empty())
   {
-    l_db = (*m_config)[FILE_CONFIG_FILE];
+    l_db = (*m_config)[FILE_NOTES_DB];
   }
 
   else
