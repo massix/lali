@@ -1,4 +1,4 @@
-LALI (*L*ist *A* *LI*st)
+LALI ( _L_ist _A_ _LI_st )
 --------------------------
 
 LALI is my personal todo-list manager. I wrote this because:
