@@ -217,7 +217,7 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kSearch;
   else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
     m_action = kExport;
-  else if (m_parameters.m_action == "list" or m_parameters.m_action == "l" or m_parameters.m_title.empty())
+  else if (m_parameters.m_action == "list" or m_parameters.m_action == "l" or m_parameters.m_action.empty())
     m_action = kList;
   else if (m_parameters.m_action == "help" or
            m_parameters.m_action == "-h" or
