@@ -1,7 +1,7 @@
-LALI ( _L_ist _A_ _LI_st )
+LALI: LIST A LIST
 --------------------------
 
-LALI is my personal todo-list manager. I wrote this because:
+LALI (<b>L</b>ist **A** <b>LI</b>st) is my personal todo-list manager. I wrote this because:
  * I was bored;
  * I wasn't able to find a CLI todo-list program that was
    fitting my needs;
