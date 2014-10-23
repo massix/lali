@@ -48,9 +48,11 @@ std::ostream & element::serialize(std::ostream & p_stream) const
 {
 	p_stream << (uint8_t) 0x01;
 	p_stream << m_title.size();
+	p_stream << (uint8_t) 0x01;
 	p_stream << m_title;
 	p_stream << (uint8_t) 0x01;
 	p_stream << m_body.size();
+	p_stream << (uint8_t) 0x01;
 	p_stream << m_body;
 	p_stream << (uint8_t) 0x01;
 	p_stream << m_priority;
@@ -68,6 +70,7 @@ std::istream & element::deserialize(std::istream & p_stream)
 
 	// Title
 	p_stream >> l_size;
+  p_stream >> l_separator;
 	if (l_separator && l_size) {
 		std::vector<char> l_tmp(l_size);
 		p_stream.read(&l_tmp[0], l_size);
@@ -78,6 +81,7 @@ std::istream & element::deserialize(std::istream & p_stream)
 
 	// Body
 	p_stream >> l_size;
+	p_stream >> l_separator;
 	if (l_separator && l_size) {
 		std::vector<char> l_tmp(l_size);
 		p_stream.read(&l_tmp[0], l_size);
@@ -87,7 +91,6 @@ std::istream & element::deserialize(std::istream & p_stream)
 
 	// Priority
 	p_stream >> m_priority;
-
 	p_stream >> l_separator;
 
 	return p_stream;

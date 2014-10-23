@@ -192,6 +192,7 @@ bool application::fill_parameters(int argc, char *argv[])
       if (not m_parameters.m_title.empty())
         m_parameters.m_title += " ";
       m_parameters.m_title += std::string(argv[l_index]);
+      fprintf(stderr, "Adding %s in note\n", argv[l_index]);
     }
 
     else
