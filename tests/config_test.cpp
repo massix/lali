@@ -29,8 +29,7 @@ int main()
   todo::config l_config("../config_file.example.todo");
   assert(l_config.parse_config() == true);
 
-  assert(l_config[FILE_CONFIG_FILE] == "test_file");
-  assert(l_config[FILE_NOTES_DB] == "/Users/myuser/notes.bin");
+  assert(l_config[FILE_NOTES_DB] == "./notes.bin");
 
   assert(l_config[NOTE_ID_FORMAT] == "0x%04X");
   assert(l_config[NOTE_COUNT_COLOR] == "red");

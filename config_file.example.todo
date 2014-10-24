@@ -1,6 +1,5 @@
 # This is a comment
-file_config_file = test_file
-file_notes_db = /Users/myuser/notes.bin
+file_notes_db = ./notes.bin
 
 # Some defaults
 always_ask_for_confirmation = true

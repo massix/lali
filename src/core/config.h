@@ -42,7 +42,6 @@
 #define PRIORITY_DEFAULT_TEXT   "priority_default_text"
 #define NOTE_SEARCH_COLOR       "note_search_color"
 #define FILE_NOTES_DB           "file_notes_db"
-#define FILE_CONFIG_FILE        "file_config_file"
 #define ALWAYS_ASK_CONFIRMATION "always_ask_for_confirmation"
 #define MONOCHROME              "monochrome"
 #define LIST_FORMAT             "list_format"
