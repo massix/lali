@@ -76,11 +76,7 @@ bool config::parse_config()
     if (l_line[0] == '#' or l_line[0] == ' ' or l_line[0] == '\0') continue;
     std::string l_string(l_line);
 
-    if (l_string.substr(0, strlen(FILE_CONFIG_FILE)) == FILE_CONFIG_FILE)
-    {
-      (*this)(FILE_CONFIG_FILE) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(FILE_NOTES_DB)) == FILE_NOTES_DB)
+    if (l_string.substr(0, strlen(FILE_NOTES_DB)) == FILE_NOTES_DB)
     {
       (*this)(FILE_NOTES_DB) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
