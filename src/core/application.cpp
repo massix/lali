@@ -346,12 +346,12 @@ void application::pretty_print_element(todo::element const & p_element)
   l_format.replace(l_format.find("@TITLE@"), 7, l_title);
   l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, l_priority);
   if (p_element.m_body.empty()) {
-    l_format.replace(l_format.find("@IF_BODY@"), 
+    l_format.replace(l_format.find("@IF_BODY@"),
         l_format.find("@END_IF_BODY@") - l_format.find("@IF_BODY@") + 13, "");
   }
   else {
-    l_format.replace(l_format.find("@IF_BODY@"), 9, ""); 
-    l_format.replace(l_format.find("@END_IF_BODY@"), 13, ""); 
+    l_format.replace(l_format.find("@IF_BODY@"), 9, "");
+    l_format.replace(l_format.find("@END_IF_BODY@"), 13, "");
   }
 
   fprintf(stdout, "%s\n", l_format.c_str());
@@ -365,6 +365,13 @@ int application::run()
   }
 
   std::string l_db;
+
+  // Check environment for LALI_DB variable
+  char * l_env = getenv("LALI_DB");
+  if (l_env)
+  {
+    m_parameters.m_tododb = std::string(l_env);
+  }
 
   if (m_parameters.m_tododb.empty())
   {
