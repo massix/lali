@@ -100,7 +100,10 @@ bool application::fill_parameters(int argc, char *argv[])
 
   // Sane defaults
   m_parameters.m_filling_body = false;
-  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
+
+  if (m_parameters.m_todorc.empty())
+    m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
+
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
@@ -275,7 +278,8 @@ bool application::fill_environment()
 
   env_t l_environmentVariables = {
     {"LALI_DB", &(m_parameters.m_tododb)},
-    {"LIST_FORMAT", &(m_parameters.m_format)}
+    {"LALI_FORMAT", &(m_parameters.m_format)},
+    {"LALI_RC", &(m_parameters.m_todorc)}
   };
 
   for(env_t::value_type& l_value : l_environmentVariables) {
