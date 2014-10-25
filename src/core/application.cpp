@@ -47,7 +47,7 @@ application::application(int argc, char *argv[])
 
   m_exporters["txt"]      = new txt_exporter();
 
-  status = fill_parameters(argc, argv);
+  status = fill_environment() and fill_parameters(argc, argv);
 }
 
 application::~application()
@@ -268,6 +268,25 @@ bool application::fill_parameters(int argc, char *argv[])
   return l_ret;
 }
 
+bool application::fill_environment()
+{
+  typedef std::map<std::string, std::string*> env_t;
+  bool l_ret(true);
+
+  env_t l_environmentVariables = {
+    {"LALI_DB", &(m_parameters.m_tododb)},
+    {"LIST_FORMAT", &(m_parameters.m_format)}
+  };
+
+  for(env_t::value_type& l_value : l_environmentVariables) {
+    char * l_env = getenv(l_value.first.c_str());
+    if (l_env)
+      l_value.second->assign(l_env);
+  }
+
+  return l_ret;
+}
+
 void application::print_usage()
 {
   if (not m_error.empty())
@@ -365,13 +384,6 @@ int application::run()
   }
 
   std::string l_db;
-
-  // Check environment for LALI_DB variable
-  char * l_env = getenv("LALI_DB");
-  if (l_env)
-  {
-    m_parameters.m_tododb = std::string(l_env);
-  }
 
   if (m_parameters.m_tododb.empty())
   {
