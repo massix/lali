@@ -184,7 +184,7 @@ todo::collection const & collection::retrieve_notes_by_priority(uint32_t p_prior
         todo::element l_creation = l_element;
 
         m_search_result->push_back(l_creation);
-        (*m_search_result)[m_search_result->size()-1].m_index = l_element.m_index;
+        m_search_result->back().m_index = l_element.m_index;
       }
     });
   }

@@ -36,7 +36,6 @@ config::config(std::string const & p_filename) :
   m_config_file(p_filename)
 {
   // Sane defaults
-
   (*this)(NOTE_COUNT_COLOR)         = "red";
   (*this)(NOTE_ID_COLOR)            = "cyan";
   (*this)(NOTE_ID_FORMAT)           = "%02d";

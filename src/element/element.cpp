@@ -76,7 +76,7 @@ std::istream & element::deserialize(std::istream & p_stream)
 		p_stream.read(&l_tmp[0], l_size);
 		m_title.assign(&l_tmp[0], l_size);
 	}
-	
+
 	p_stream >> l_separator;
 
 	// Body
@@ -99,7 +99,7 @@ std::istream & element::deserialize(std::istream & p_stream)
 bool element::operator==(element const & p_right) const
 {
 	return (
-			p_right.m_title == m_title && 
+			p_right.m_title == m_title &&
 			p_right.m_body == m_body &&
 			p_right.m_priority == m_priority);
 }
