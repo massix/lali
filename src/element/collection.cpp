@@ -157,8 +157,8 @@ todo::collection const & collection::retrieve_notes_by_text(std::string const & 
     m_search_result = new collection();
     std::for_each(begin(), end(), [&](todo::element const & l_element)->void {
       std::string l_title_lowercase;
-      std::for_each(l_element.m_title.begin(), l_element.m_title.end(),
-          [&](const char & n)->void { l_title_lowercase.push_back(::tolower(n));
+      std::for_each(l_element.m_title.begin(), l_element.m_title.end(), [&](const char & n)->void {
+          l_title_lowercase.push_back(::tolower(n));
       });
       if (l_title_lowercase.find(l_word) != std::string::npos) {
         todo::element l_creation = l_element;
