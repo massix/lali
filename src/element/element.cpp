@@ -70,7 +70,7 @@ std::istream & element::deserialize(std::istream & p_stream)
 
 	// Title
 	p_stream >> l_size;
-  p_stream >> l_separator;
+	p_stream >> l_separator;
 	if (l_separator && l_size) {
 		std::vector<char> l_tmp(l_size);
 		p_stream.read(&l_tmp[0], l_size);
