@@ -43,6 +43,7 @@ namespace todo
   public:
     web(uint32_t p_port);
     void run();
+    void stop();
 
     typedef servlets_t::const_iterator const_iterator;
     const_iterator begin() const;

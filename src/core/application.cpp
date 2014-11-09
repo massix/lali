@@ -29,8 +29,12 @@
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include <signal.h>
+#include <functional>
 
 using namespace todo;
+
+static web * g_web;
 
 application::application(int argc, char *argv[])
 {
@@ -411,9 +415,21 @@ int application::run()
   {
     case kWeb:
     {
-       web l_web(9090);
-       l_web.run();
-       break;
+      g_web = new web(9090);
+
+      auto l_handler = [](int p_sig)->void {
+        fprintf(stdout, "Caught signal %d\n", p_sig);
+        g_web->stop();
+      };
+
+      // Catch signals to stop the server
+      signal(SIGTERM, l_handler);
+      signal(SIGHUP, l_handler);
+      signal(SIGTRAP, l_handler);
+      signal(SIGINT, l_handler);
+
+      g_web->run();
+      break;
     }
     case kList:
     {
