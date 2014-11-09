@@ -18,16 +18,10 @@
 //
 
 
-#ifndef _WEB_H_
-#define _WEB_H_
+#ifndef _HTTP_REQUEST_H_
+#define _HTTP_REQUEST_H_
 
 #include <string>
-#include <stdint.h>
-#include <iostream>
-#include <sstream>
-#include "element.h"
-#include "collection.h"
-#include <vector>
 #include <map>
 
 #ifndef __TESTABLE__
@@ -36,24 +30,27 @@
 
 namespace todo
 {
-  class web
+  class http_request
   {
-    typedef std::map<std::string, collection *> servlets_t;
+  public:
+    typedef std::map<std::string, std::string>  headers_t;
+    typedef std::pair<std::string, std::string> header_t;
+    typedef headers_t::const_iterator const_iterator;
+    typedef headers_t::iterator       iterator;
+    typedef headers_t::value_type     value_type;
 
   public:
-    web(uint32_t p_port);
-    void run();
+    http_request(std::string const & p_request);
 
-    typedef servlets_t::const_iterator const_iterator;
-    const_iterator begin() const;
-    const_iterator end() const;
-    void insert(std::string const & p_key, collection const * p_collection);
+  public:
+    http_request::const_iterator begin() const;
+    http_request::const_iterator end() const;
+    http_request::iterator       begin();
+    http_request::iterator       end();
+    void insert(header_t const & p_header);
 
   private:
-    uint32_t   m_port;
-    servlets_t m_servlets;
-    int        m_socket;
-    bool       m_running;
+    headers_t m_headers;
   };
 }
 

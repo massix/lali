@@ -19,15 +19,14 @@
 
 
 #include "web.h"
+#include "http_request.h"
 #include "collection.h"
-#include <sys/socket.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 
 #include <iostream>
 #include <unistd.h>
-
 
 using namespace todo;
 
@@ -90,7 +89,12 @@ void web::run()
       }
 
       // If we are here, we have a request to handle
-      fprintf(stdout, "Request: '%s'\n", l_buffer);
+      http_request l_headers(l_buffer);
+      for (http_request::value_type const & l_value : l_headers) {
+        fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
+      }
+
+
       std::string l_response("HTTP/1.1 200 Okay\r\n"
                              "Server: lali-web\r\n"
                              "Content-Type: text/html\r\n\r\n");
@@ -114,4 +118,3 @@ void web::run()
     close(m_socket);
   }
 }
-

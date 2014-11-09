@@ -2,7 +2,7 @@ include ../../Include.make
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -I../element -I../exporters -I../core -I.
 PREFIX   = /usr/local
 
-compiled_OBJECTS = web.o
+compiled_OBJECTS = http_request.o web.o
 compiled_LIBRARY = libweb.a
 
 
