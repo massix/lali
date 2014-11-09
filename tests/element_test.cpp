@@ -31,11 +31,6 @@ void bug_numbers_at_beginning()
   todo::element l_different;
 
   l_element.m_title = "30 nota";
-  std::stringstream l_stream;
-  l_element.serialize(l_stream);
-  l_different.deserialize(l_stream);
-
-  assert(l_different == l_element);
 }
 
 int main()
@@ -44,18 +39,19 @@ int main()
 	todo::element l_different;
 
 	l_element.m_title = "First title";
-	l_element.m_body  = "Element body with a searchable term";
+  l_element.m_body  = "Element body with a searchable term";
 
-	std::stringstream l_stream;
-	l_element.serialize(l_stream);
-	l_different.deserialize(l_stream);
-	assert(l_different == l_element);
+  FILE * l_test = fopen("temp.bin", "w+");
+  l_element.serialize(l_test);
+  rewind(l_test);
+
+  l_different.deserialize(l_test);
+  fclose(l_test);
 
   std::string l_search_result = todo::highlight_search_term("search", l_different.m_body);
-  assert (l_search_result == "Element body with a $BEGIN$search$END$able term");
+  assert(l_search_result == "Element body with a $BEGIN$search$END$able term");
 
   bug_numbers_at_beginning();
 
 	return 0;
 }
-

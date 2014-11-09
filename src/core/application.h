@@ -63,7 +63,7 @@ class application
         bool          m_confirmation;
         bool          m_dryrun;
 
-        struct exporter 
+        struct exporter
         {
           std::string m_file;
           std::string m_type;
@@ -80,6 +80,7 @@ class application
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);
+    bool fill_environment();
     bool status;
 
     void print_usage();

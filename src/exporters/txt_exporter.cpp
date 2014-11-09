@@ -29,7 +29,7 @@ using namespace todo;
 bool txt_exporter::process_note(todo::element const & p_element)
 {
   char l_buffer[1024];
-  snprintf(l_buffer, 1024, " %02d   --  %s  [%s]  --  %02d\n", 
+  snprintf(l_buffer, 1024, " %02d   --  %s  [%s]  --  %02d\n",
       p_element.m_index, p_element.m_title.c_str(), p_element.m_body.c_str(), p_element.m_priority);
   fwrite(l_buffer, strlen(l_buffer), sizeof(char), m_file);
   return true;

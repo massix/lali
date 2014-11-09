@@ -16,3 +16,9 @@ tags
 tags.*
 **/tags
 *.a
+GPATH
+GRTAGS
+GTAGS
+*.~
+.dir-locals.el
+.project.ede.el

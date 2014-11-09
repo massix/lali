@@ -41,4 +41,3 @@ int main()
   assert(l_collection == l_other_collection);
 	return 0;
 }
-

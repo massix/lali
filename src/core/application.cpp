@@ -47,7 +47,7 @@ application::application(int argc, char *argv[])
 
   m_exporters["txt"]      = new txt_exporter();
 
-  status = fill_parameters(argc, argv);
+  status = fill_environment() and fill_parameters(argc, argv);
 }
 
 application::~application()
@@ -100,7 +100,10 @@ bool application::fill_parameters(int argc, char *argv[])
 
   // Sane defaults
   m_parameters.m_filling_body = false;
-  m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
+
+  if (m_parameters.m_todorc.empty())
+    m_parameters.m_todorc = std::string(getenv("HOME")) + std::string("/.lalirc");
+
   m_parameters.m_verbose = false;
   m_parameters.m_priority = 100;
   m_parameters.m_note_id = 1000;
@@ -268,6 +271,26 @@ bool application::fill_parameters(int argc, char *argv[])
   return l_ret;
 }
 
+bool application::fill_environment()
+{
+  typedef std::map<std::string, std::string*> env_t;
+  bool l_ret(true);
+
+  env_t l_environmentVariables = {
+    {"LALI_DB", &(m_parameters.m_tododb)},
+    {"LALI_FORMAT", &(m_parameters.m_format)},
+    {"LALI_RC", &(m_parameters.m_todorc)}
+  };
+
+  for(env_t::value_type& l_value : l_environmentVariables) {
+    char * l_env = getenv(l_value.first.c_str());
+    if (l_env)
+      l_value.second->assign(l_env);
+  }
+
+  return l_ret;
+}
+
 void application::print_usage()
 {
   if (not m_error.empty())
@@ -346,12 +369,12 @@ void application::pretty_print_element(todo::element const & p_element)
   l_format.replace(l_format.find("@TITLE@"), 7, l_title);
   l_format.replace(l_format.find("@PRIORITY_TEXT@"), 15, l_priority);
   if (p_element.m_body.empty()) {
-    l_format.replace(l_format.find("@IF_BODY@"), 
+    l_format.replace(l_format.find("@IF_BODY@"),
         l_format.find("@END_IF_BODY@") - l_format.find("@IF_BODY@") + 13, "");
   }
   else {
-    l_format.replace(l_format.find("@IF_BODY@"), 9, ""); 
-    l_format.replace(l_format.find("@END_IF_BODY@"), 13, ""); 
+    l_format.replace(l_format.find("@IF_BODY@"), 9, "");
+    l_format.replace(l_format.find("@END_IF_BODY@"), 13, "");
   }
 
   fprintf(stdout, "%s\n", l_format.c_str());
