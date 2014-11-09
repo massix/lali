@@ -76,7 +76,8 @@ class application
       kModify,
       kList,
       kSearch,
-      kExport
+      kExport,
+      kWeb
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);

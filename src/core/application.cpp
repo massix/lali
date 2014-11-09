@@ -23,6 +23,7 @@
 #include "collection.h"
 #include "config.h"
 #include "txt_exporter.h"
+#include "web.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -220,6 +221,8 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kSearch;
   else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
     m_action = kExport;
+  else if (m_parameters.m_action == "web" or m_parameters.m_action == "w")
+    m_action = kWeb;
   else if (m_parameters.m_action == "list" or m_parameters.m_action == "l" or m_parameters.m_action.empty())
     m_action = kList;
   else if (m_parameters.m_action == "help" or
@@ -307,6 +310,7 @@ void application::print_usage()
     printf("       delete   | d <parameters>     delete a given note\n");
     printf("       search   | s <parameters>     search for given text in notes\n");
     printf("       export   | e <parameters>     exports the current db in a different format\n");
+    printf("          web   | w <parameters>     start the web service\n");
     printf("\n");
     printf(" List of available parameters\n");
     printf("     --format   | -f <format>        format to use (see documentation)\n");
@@ -405,6 +409,12 @@ int application::run()
 
   switch (m_action)
   {
+    case kWeb:
+    {
+       web l_web(9090);
+       l_web.run();
+       break;
+    }
     case kList:
     {
       if (m_parameters.m_priority > 2) {
