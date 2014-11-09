@@ -2,6 +2,6 @@
 
 CXX      = clang++
 AR       = ar
-VERSION  = 0.6.1dev
+VERSION  = 0.7.0
 PREFIX   = /usr/local
 
