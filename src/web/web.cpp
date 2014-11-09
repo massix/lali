@@ -25,6 +25,7 @@
 #include <sys/select.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <thread>
 
 #include <iostream>
 #include <unistd.h>
@@ -49,7 +50,6 @@ void web::run()
   {
     struct sockaddr_in l_serverAddress;
     struct sockaddr_in l_clientAddress;
-    char               l_buffer[4096];
 
     bzero(&l_serverAddress, sizeof(l_serverAddress));
     bzero(&l_clientAddress, sizeof(l_clientAddress));
@@ -70,12 +70,10 @@ void web::run()
       return;
     }
 
-    // Set the timeout
-    setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-
     // Reusable socket
     int yes = 1;
     setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+    setsockopt(m_socket, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(int));
 
     // Listen
     if (listen(m_socket, 3) == -1)
@@ -87,45 +85,52 @@ void web::run()
     m_running = true;
     while (m_running) {
       fd_set l_set;
+
       FD_ZERO(&l_set);
       FD_SET(m_socket, &l_set);
-
-      int l_clientLength = sizeof(l_clientAddress);
       select(m_socket + 1, &l_set, nullptr, nullptr, &tv);
 
       if (FD_ISSET(m_socket, &l_set) and m_running) {
-        int l_accepted = accept(m_socket,
-                                (struct sockaddr *) &l_clientAddress,
-                                (socklen_t *) &l_clientLength);
+        std::thread l_thread([&] {
+          std::string l_request;
+          int l_clientLength = sizeof(l_clientAddress);
+          l_request.resize(4096);
 
-        if (recv(l_accepted, l_buffer, 4096, 0) == -1) {
-          perror("recv(): ");
-          return;
-        }
+          int l_accepted = accept(m_socket,
+                                  (struct sockaddr *) &l_clientAddress,
+                                  (socklen_t *) &l_clientLength);
 
-        // If we are here, we have a request to handle
-        http_request l_headers(l_buffer);
-        for (http_request::value_type const & l_value : l_headers)
-          fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
+          int32_t l_length = recv(l_accepted, (void *) l_request.data(), l_request.size(), 0);
+          l_request.resize(l_length);
 
-        std::string l_response("HTTP/1.1 200 Okay\r\n"
-                               "Server: lali-web\r\n"
-                               "Content-Type: text/html\r\n\r\n");
-        l_response += "<html><head><title>Lali web service</title></head>"
-          "<body>Welcome!</body></html>";
+          // If we are here, we have a request to handle
+          http_request l_headers(l_request);
+          for (http_request::value_type const & l_value : l_headers)
+            fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
 
-        ssize_t l_length = send(l_accepted,
-                                l_response.c_str(),
-                                l_response.size(),
-                                0);
-        if (l_length == -1) {
-          perror("send(): ");
-          return;
-        }
+          std::string l_response("HTTP/1.1 200 Okay\r\n"
+                                 "Server: lali-web\r\n"
+                                 "Content-Type: text/html\r\n\r\n");
+          l_response += "<html><head><title>Lali web service</title></head>"
+            "<body>Welcome!</body></html>";
 
-        fprintf(stdout, "Response: '%s'\n", l_response.c_str());
-        fprintf(stdout, "Size: %ld\n", l_length);
-        close(l_accepted);
+          l_length = send(l_accepted,
+                          l_response.c_str(),
+                          l_response.size(),
+                          0);
+
+          if (l_length == -1) {
+            perror("send(): ");
+            return;
+          }
+
+          fprintf(stdout, "Response: \n%s\n", l_response.c_str());
+          fprintf(stdout, "Size: %d\n", l_length);
+          close(l_accepted);
+        });
+
+        // We should remove this
+        l_thread.join();
       }
     }
 

@@ -26,26 +26,6 @@ using namespace todo;
 url::url(std::string const & p_url)
 {
   fprintf(stdout, "Building the url starting from '%s'\n", p_url.c_str());
-
-  // if (p_url.find('/') != std::string::npos)
-  // {
-  //   std::string l_base_path = p_url.substr(0, p_url.find_last_of('/') + 1);
-  //   fprintf(stdout, "Base path: '%s'\n", l_base_path.c_str());
-  //   // On the base path we will then build the path by tokenizing on the '/' chars
-
-  //   if (p_url.find_last_of('/') + 1 != std::string::npos) {
-  //     std::string l_page = p_url.substr(p_url.find_last_of('/') + 1);
-  //     fprintf(stdout, "Rest: '%s'\n", l_page.c_str());
-
-  //     // We have a CGI
-  //     if (l_page.find('?') != std::string::npos) {
-  //       std::string l_cgi = l_page.substr(l_page.find_first_of('?'));
-  //       l_page = l_page.substr(0, l_page.find_first_of('?'));
-
-  //       fprintf(stdout, "page: '%s' - cgi: '%s'\n", l_page.c_str(), l_cgi.c_str());
-  //     }
-  //   }
-  // }
 }
 
 http_request::http_request(std::string const & p_request) : m_valid(false)
@@ -84,7 +64,7 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
 
   m_url.reset(new url(m_headers["URL"]));
 
-  // The most stupid parsing ever.
+  // The stupidest parsing ever.
   for (const char & n : l_rest)
   {
     // Here we have finished parsing a key
