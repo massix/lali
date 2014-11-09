@@ -23,6 +23,8 @@
 
 #include <string>
 #include <map>
+#include <vector>
+#include <memory>
 
 #ifndef __TESTABLE__
 #define __TESTABLE__
@@ -30,17 +32,37 @@
 
 namespace todo
 {
+  class url
+  {
+  public:
+    typedef std::vector<std::string>           path_t;
+    typedef std::map<std::string, std::string> cgi_t;
+
+  public:
+    url(std::string const & p_url);
+
+  private:
+    path_t  m_path;
+    cgi_t   m_cgi;
+  };
+
   class http_request
   {
   public:
     typedef std::map<std::string, std::string>  headers_t;
     typedef std::pair<std::string, std::string> header_t;
-    typedef headers_t::const_iterator const_iterator;
-    typedef headers_t::iterator       iterator;
-    typedef headers_t::value_type     value_type;
+    typedef headers_t::const_iterator           const_iterator;
+    typedef headers_t::iterator                 iterator;
+    typedef headers_t::value_type               value_type;
+
+    enum request_type_t {
+      kGet  = 0,
+      kPost
+    };
 
   public:
     http_request(std::string const & p_request);
+    virtual ~http_request();
 
   public:
     http_request::const_iterator begin() const;
@@ -48,9 +70,13 @@ namespace todo
     http_request::iterator       begin();
     http_request::iterator       end();
     void insert(header_t const & p_header);
+    bool is_valid() const;
 
   private:
-    headers_t m_headers;
+    headers_t            m_headers;
+    request_type_t       m_request;
+    bool                 m_valid;
+    std::shared_ptr<url> m_url;
   };
 }
 
