@@ -20,8 +20,11 @@
 
 #include "element.h"
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <vector>
+#include <stdio.h>
+#include <cassert>
 
 using namespace todo;
 
@@ -44,57 +47,64 @@ element::~element()
 {
 }
 
-std::ostream & element::serialize(std::ostream & p_stream) const
+void element::serialize(FILE *p_file) const
 {
-	p_stream << std::ios::binary;
-	p_stream << (uint8_t) 0x01;
-	p_stream << m_title.size();
-	p_stream << (uint8_t) 0x01;
-	p_stream << m_title;
-	p_stream << (uint8_t) 0x01;
-	p_stream << m_body.size();
-	p_stream << (uint8_t) 0x01;
-	p_stream << m_body;
-	p_stream << (uint8_t) 0x01;
-	p_stream << m_priority;
-	p_stream << (uint8_t) 0x01;
+	uint8_t  l_separator  = 0x01;
+	uint32_t l_titleSize  = m_title.size();
+	uint32_t l_bodySize   = m_body.size();
+	uint8_t  l_priority   = (uint8_t) m_priority;
 
-	return p_stream;
+	fwrite(&l_separator,    sizeof(uint8_t),  1,           p_file);
+	fwrite(&l_titleSize,    sizeof(uint32_t), 1,           p_file);
+	fwrite(m_title.c_str(), sizeof(char),     l_titleSize, p_file);
+	fwrite(&l_separator,    sizeof(uint8_t),  1,           p_file);
+	fwrite(&l_bodySize,     sizeof(uint32_t), 1,           p_file);
+	fwrite(m_body.c_str(),  sizeof(char),     l_bodySize,  p_file);
+	fwrite(&l_separator,    sizeof(uint8_t),  1,           p_file);
+	fwrite(&l_priority,     sizeof(uint8_t),  1,           p_file);
 }
 
-std::istream & element::deserialize(std::istream & p_stream)
+void element::deserialize(FILE *p_file)
 {
-	uint8_t l_separator;
-	std::size_t l_size;
+  uint8_t  const l_separator(0x01);
+  uint32_t       l_titleSize(0);
+  uint32_t       l_bodySize(0);
+  uint8_t        l_priority(0);
+	char *         l_buffer;
 
-	p_stream >> l_separator;
+	fread((void *) &l_separator, sizeof(uint8_t), 1, p_file);
+	assert(l_separator == 0x01);
 
-	// Title
-	p_stream >> l_size;
-	p_stream >> l_separator;
-	if (l_separator && l_size) {
-		std::vector<char> l_tmp(l_size);
-		p_stream.read(&l_tmp[0], l_size);
-		m_title.assign(&l_tmp[0], l_size);
+	fread((void *) &l_titleSize, sizeof(uint32_t), 1, p_file);
+	assert(l_titleSize > 0);
+
+	l_buffer = new char[l_titleSize];
+	bzero(l_buffer, l_titleSize);
+	fread((void *) l_buffer, sizeof(char), l_titleSize, p_file);
+	l_buffer[l_titleSize] = '\0';
+
+	m_title.assign(l_buffer);
+	delete [] l_buffer;
+
+	fread((void *) &l_separator, sizeof(uint8_t), 1, p_file);
+	assert(l_separator == 0x01);
+
+	fread((void *) &l_bodySize, sizeof(uint32_t), 1, p_file);
+
+	if (l_bodySize) {
+			l_buffer = new char[l_bodySize];
+			bzero(l_buffer, l_bodySize);
+			fread((void *) l_buffer, sizeof(char), l_bodySize, p_file);
+			l_buffer[l_bodySize] = '\0';
+			m_body.assign(l_buffer);
+			delete [] l_buffer;
 	}
 
-	p_stream >> l_separator;
+	fread((void *) &l_separator, sizeof(uint8_t), 1, p_file);
+	assert(l_separator == 0x01);
 
-	// Body
-	p_stream >> l_size;
-	p_stream >> l_separator;
-	if (l_separator && l_size) {
-		std::vector<char> l_tmp(l_size);
-		p_stream.read(&l_tmp[0], l_size);
-		m_body.assign(&l_tmp[0], l_size);
-	}
-	p_stream >> l_separator;
-
-	// Priority
-	p_stream >> m_priority;
-	p_stream >> l_separator;
-
-	return p_stream;
+	fread((void *) &l_priority, sizeof(uint8_t), 1, p_file);
+	m_priority = l_priority;
 }
 
 bool element::operator==(element const & p_right) const

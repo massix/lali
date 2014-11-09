@@ -28,6 +28,10 @@
 #include "element.h"
 #include <vector>
 
+#ifndef __TESTABLE__
+#define __TESTABLE__ private
+#endif
+
 namespace todo
 {
     class collection : public std::vector<todo::element>
@@ -38,9 +42,6 @@ namespace todo
         virtual ~collection();
         virtual void push_back(todo::element & p_element);
 
-        std::ostream & serialize   (std::ostream & p_stream) const;
-        std::istream & deserialize (std::istream & p_stream);
-
         void write_file() const;
         void read_file();
 
@@ -49,12 +50,18 @@ namespace todo
         collection const & retrieve_notes_by_priority(uint32_t p_priority);
     protected:
         collection();
+        void           serialize   (FILE* p_file) const;
+        void         deserialize   (FILE* p_file);
+
         void push_back_original(todo::element const & p_element);
 
     private:
         std::string   m_filename;
         collection *  m_sorted;
         collection *  m_search_result;
+
+    __TESTABLE__:
+        void unlink();
     };
 
 }

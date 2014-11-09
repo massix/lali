@@ -26,11 +26,15 @@
 #include <iomanip>
 #include <fstream>
 #include <algorithm>
+#include <stdio.h>
+#include <unistd.h>
+#include <cassert>
+#include <sys/stat.h>
 
 using namespace todo;
 
 collection::collection(std::string const & p_filename) :
-	m_filename(p_filename), m_sorted(0), m_search_result(0)
+  m_filename(p_filename), m_sorted(0), m_search_result(0)
 {
 }
 
@@ -45,58 +49,54 @@ collection::~collection()
   if (m_search_result) delete m_search_result;
 }
 
-std::ostream & collection::serialize(std::ostream & p_stream) const
+void collection::serialize(FILE* p_file) const
 {
   const uint32_t l_separator = 0xDEADBEEF;
   uint64_t l_size = size();
 
-  p_stream << std::ios::binary;
-  p_stream << l_size;
+  fwrite(&l_size, sizeof(uint64_t), 1, p_file);
 
   std::for_each(begin(), end(), [&](todo::element const & l_element)->void {
-    l_element.serialize(p_stream);
-    p_stream << l_separator;
+    l_element.serialize(p_file);
+    fwrite(&l_separator, sizeof(uint32_t), 1, p_file);
   });
-
-  return p_stream;
 }
 
-std::istream & collection::deserialize(std::istream & p_stream)
+void collection::deserialize(FILE* p_file)
 {
   uint32_t l_separator;
-
   uint64_t l_size(0);
-  p_stream >> l_size;
 
-  for (uint32_t l_iter = 0; l_iter < l_size; l_iter++)
+  fread((void *) &l_size, sizeof(uint64_t), 1, p_file);
+  for (uint32_t c_counter = 0; c_counter < l_size; c_counter++)
   {
     todo::element l_element;
-    l_element.deserialize(p_stream);
-    l_element.m_index = l_iter;
+    l_element.deserialize(p_file);
+    l_element.m_index = c_counter;
     push_back(l_element);
-
-    p_stream >> l_separator;
+    fread((void *) &l_separator, sizeof(uint32_t), 1, p_file);
+    assert(l_separator == 0xDEADBEEF);
   }
-
-  return p_stream;
 }
 
 void collection::write_file() const
 {
-  std::ofstream l_file;
+  FILE* l_filePtr = nullptr;
 
-  l_file.open(m_filename.c_str(), std::ofstream::out | std::ofstream::binary);
-  serialize(l_file);
-  l_file.close();
+  l_filePtr = fopen(m_filename.c_str(), "w+");
+  serialize(l_filePtr);
+  fclose(l_filePtr);
 }
 
 void collection::read_file()
 {
-  std::ifstream l_file;
+  FILE * l_file = fopen(m_filename.c_str(), "r+");
+  struct stat l_stat;
 
-  l_file.open(m_filename.c_str(), std::ifstream::in | std::ifstream::binary);
-  deserialize(l_file);
-  l_file.close();
+  if (stat(m_filename.c_str(), &l_stat) == 0) {
+    deserialize(l_file);
+    fclose(l_file);
+  }
 }
 
 void collection::push_back(todo::element & p_element)
@@ -191,4 +191,9 @@ todo::collection const & collection::retrieve_notes_by_priority(uint32_t p_prior
   }
 
   return *m_search_result;
+}
+
+void collection::unlink()
+{
+  ::unlink(m_filename.c_str());
 }

@@ -39,8 +39,8 @@ class element
 
 		bool operator==(element const & p_right) const;
 
-		std::ostream & serialize   (std::ostream & p_stream) const;
-		std::istream & deserialize (std::istream & p_stream);
+		void           serialize   (FILE* p_file) const;
+		void         deserialize   (FILE* p_file);
 
 		std::string  m_title;
 		std::string  m_body;
