@@ -17,7 +17,7 @@
 //  0. You just DO WHAT THE FUCK YOU WANT TO.
 //
 
-#define __TESTABLE__ public
+#define __TESTABLE__ public:
 
 #include "element.h"
 #include "collection.h"

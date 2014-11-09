@@ -29,7 +29,7 @@
 #include <vector>
 
 #ifndef __TESTABLE__
-#define __TESTABLE__ private
+#define __TESTABLE__
 #endif
 
 namespace todo
@@ -48,7 +48,8 @@ namespace todo
         collection const & sort_by_priority(bool ascendent = false);
         collection const & retrieve_notes_by_text(std::string const & l_word);
         collection const & retrieve_notes_by_priority(uint32_t p_priority);
-    protected:
+
+    protected: __TESTABLE__
         collection();
         void           serialize   (FILE* p_file) const;
         void         deserialize   (FILE* p_file);
@@ -60,7 +61,7 @@ namespace todo
         collection *  m_sorted;
         collection *  m_search_result;
 
-    __TESTABLE__:
+    __TESTABLE__
         void unlink();
     };
 
