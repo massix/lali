@@ -409,15 +409,17 @@ int application::run()
     {
       if (m_parameters.m_priority > 2) {
         todo::collection const & l_sorted = l_collection.sort_by_priority();
-        std::for_each(l_sorted.begin(), l_sorted.end(), [&](todo::element const & p_element)->void {
+        for (todo::element const & p_element : l_sorted)
+        {
           pretty_print_element(p_element);
-        });
+        }
       }
       else {
         todo::collection const & l_priority = l_collection.retrieve_notes_by_priority(m_parameters.m_priority);
-        std::for_each(l_priority.begin(), l_priority.end(), [&](todo::element const & p_element)->void {
+        for (todo::element const & p_element : l_priority)
+        {
           pretty_print_element(p_element);
-        });
+        }
       }
       break;
     }
@@ -489,7 +491,8 @@ int application::run()
         return 0;
       }
       else {
-        std::for_each(l_search.begin(), l_search.end(), [&](todo::element & l_element)->void {
+        for (todo::element & l_element : l_search)
+        {
           if (not m_parameters.m_monochrome and not m_config->isMonochrome()) {
             l_element.m_title.replace(l_element.m_title.find("$BEGIN$"), 7, m_colors[(*m_config)[NOTE_SEARCH_COLOR]]);
             l_element.m_title.replace(l_element.m_title.find("$END$"), 5, m_colors[(*m_config)[NOTE_TITLE_COLOR]]);
@@ -499,7 +502,7 @@ int application::run()
             l_element.m_title.replace(l_element.m_title.find("$END$"), 5, "");
           }
           pretty_print_element(l_element);
-        });
+        }
       }
       break;
     }
@@ -509,9 +512,8 @@ int application::run()
         exporter * l_exporter = m_exporters[m_parameters.m_exporter.m_type];
         l_exporter->set_file(m_parameters.m_exporter.m_file);
         l_exporter->init();
-        std::for_each(l_collection.begin(), l_collection.end(), [&](todo::element const & p_el)->void {
+        for (todo::element const & p_el : l_collection)
           l_exporter->process_note(p_el);
-        });
 
         l_exporter->finalize();
       }
