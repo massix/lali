@@ -417,8 +417,7 @@ int application::run()
     {
       g_web = new web(9090);
 
-      auto l_handler = [](int p_sig)->void {
-        fprintf(stdout, "Caught signal %d\n", p_sig);
+      auto l_handler = [](int /*p_sig*/)->void {
         g_web->stop();
       };
 
@@ -427,6 +426,8 @@ int application::run()
       signal(SIGHUP, l_handler);
       signal(SIGTRAP, l_handler);
       signal(SIGINT, l_handler);
+      signal(SIGQUIT, l_handler);
+      signal(SIGKILL, l_handler);
 
       g_web->run();
       break;

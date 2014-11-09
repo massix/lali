@@ -40,13 +40,11 @@ web::web(uint32_t p_port) :
 
 void web::stop()
 {
-  fprintf(stdout, "[%p] stopping\n", this);
   m_running = false;
 }
 
 void web::run()
 {
-  fprintf(stdout, "[%p] in run\n", this);
   if (m_socket)
   {
     struct sockaddr_in l_serverAddress;
@@ -91,7 +89,6 @@ void web::run()
       fd_set l_set;
       FD_ZERO(&l_set);
       FD_SET(m_socket, &l_set);
-      fprintf(stdout, "[%p] waiting..\n", this);
 
       int l_clientLength = sizeof(l_clientAddress);
       select(m_socket + 1, &l_set, nullptr, nullptr, &tv);
