@@ -50,6 +50,7 @@ std::ostream & collection::serialize(std::ostream & p_stream) const
   const uint32_t l_separator = 0xDEADBEEF;
   uint64_t l_size = size();
 
+  p_stream << std::ios::binary;
   p_stream << l_size;
 
   std::for_each(begin(), end(), [&](todo::element const & l_element)->void {

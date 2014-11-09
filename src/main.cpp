@@ -36,4 +36,3 @@ int main(int argc, char *argv[])
   todo::application l_app(argc, argv);
   return l_app.run();
 }
-

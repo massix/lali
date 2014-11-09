@@ -46,6 +46,7 @@ element::~element()
 
 std::ostream & element::serialize(std::ostream & p_stream) const
 {
+	p_stream << std::ios::binary;
 	p_stream << (uint8_t) 0x01;
 	p_stream << m_title.size();
 	p_stream << (uint8_t) 0x01;

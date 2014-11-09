@@ -30,32 +30,32 @@
 
 namespace todo
 {
-class collection : public std::vector<todo::element>
-{
-	public:
-		collection(std::string const & p_filename);
+    class collection : public std::vector<todo::element>
+    {
+    public:
+        collection(std::string const & p_filename);
 
-		virtual ~collection();
-    virtual void push_back(todo::element & p_element);
+        virtual ~collection();
+        virtual void push_back(todo::element & p_element);
 
-		std::ostream & serialize   (std::ostream & p_stream) const;
-		std::istream & deserialize (std::istream & p_stream);
+        std::ostream & serialize   (std::ostream & p_stream) const;
+        std::istream & deserialize (std::istream & p_stream);
 
-    void write_file() const;
-    void read_file();
+        void write_file() const;
+        void read_file();
 
-    collection const & sort_by_priority(bool ascendent = false);
-    collection const & retrieve_notes_by_text(std::string const & l_word);
-    collection const & retrieve_notes_by_priority(uint32_t p_priority);
-  protected:
-    collection();
-    void push_back_original(todo::element const & p_element);
+        collection const & sort_by_priority(bool ascendent = false);
+        collection const & retrieve_notes_by_text(std::string const & l_word);
+        collection const & retrieve_notes_by_priority(uint32_t p_priority);
+    protected:
+        collection();
+        void push_back_original(todo::element const & p_element);
 
-	private:
-		std::string   m_filename;
-    collection *  m_sorted;
-    collection *  m_search_result;
-};
+    private:
+        std::string   m_filename;
+        collection *  m_sorted;
+        collection *  m_search_result;
+    };
 
 }
 
