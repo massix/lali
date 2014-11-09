@@ -56,10 +56,10 @@ void collection::serialize(FILE* p_file) const
 
   fwrite(&l_size, sizeof(uint64_t), 1, p_file);
 
-  std::for_each(begin(), end(), [&](todo::element const & l_element)->void {
+  for (todo::element const & l_element : (*this)) {
     l_element.serialize(p_file);
     fwrite(&l_separator, sizeof(uint32_t), 1, p_file);
-  });
+  }
 }
 
 void collection::deserialize(FILE* p_file)
@@ -124,11 +124,11 @@ todo::collection const & collection::sort_by_priority(bool ascendent)
 
     m_sorted = new collection();
 
-    std::for_each(begin(), end(), [&](todo::element & l_element)->void {
+    for (todo::element & l_element : (*this)) {
       if (l_element.m_priority == 0) l_low.push_back_original(l_element);
       else if (l_element.m_priority == 1) l_medium.push_back_original(l_element);
       else l_high.push_back_original(l_element);
-    });
+    }
 
     if (not ascendent)
       m_sorted->insert(m_sorted->end(), l_high.begin(), l_high.end());
@@ -149,18 +149,17 @@ todo::collection const & collection::sort_by_priority(bool ascendent)
 todo::collection const & collection::retrieve_notes_by_text(std::string const & l_word)
 {
   std::string l_word_lowercase;
-  std::for_each(l_word.begin(), l_word.end(),
-      [&](const char & n)->void { l_word_lowercase.push_back(::tolower(n));
-  });
+  for (const char & n : l_word)
+    l_word_lowercase.push_back(::tolower(n));
 
   if (m_search_result == 0)
   {
     m_search_result = new collection();
-    std::for_each(begin(), end(), [&](todo::element const & l_element)->void {
+    for (todo::element const & l_element : (*this)) {
       std::string l_title_lowercase;
-      std::for_each(l_element.m_title.begin(), l_element.m_title.end(), [&](const char & n)->void {
-          l_title_lowercase.push_back(::tolower(n));
-      });
+      for (const char & n : l_element.m_title)
+        l_title_lowercase.push_back(::tolower(n));
+
       if (l_title_lowercase.find(l_word) != std::string::npos) {
         todo::element l_creation = l_element;
         l_creation.m_title = highlight_search_term(l_word, l_title_lowercase);
@@ -169,7 +168,7 @@ todo::collection const & collection::retrieve_notes_by_text(std::string const & 
         // Reset the index
         (*m_search_result)[m_search_result->size()-1].m_index = l_element.m_index;
       }
-    });
+    }
   }
 
   return *m_search_result;
@@ -180,14 +179,14 @@ todo::collection const & collection::retrieve_notes_by_priority(uint32_t p_prior
   if (m_search_result == 0)
   {
     m_search_result = new collection();
-    std::for_each(begin(), end(), [&](todo::element const & l_element)->void{
+    for (todo::element const & l_element : (*this)) {
       if (l_element.m_priority == p_priority) {
         todo::element l_creation = l_element;
 
         m_search_result->push_back(l_creation);
         m_search_result->back().m_index = l_element.m_index;
       }
-    });
+    }
   }
 
   return *m_search_result;
