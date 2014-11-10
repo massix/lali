@@ -40,7 +40,8 @@ web::web(uint32_t p_port) :
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
   // Register a debug servlet
-  m_servlets["/servlet/test/"] = [](std::string const & p_page, url::cgi_t const & p_cgi)->std::string {
+  m_servlets["/servlet/test/"] = [](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+    p_request.m_code = http_request::kOkay;
     std::string l_resp("<html><head><title>Test servlet</title></head><body>");
     l_resp += "<h1>" + p_page + "</h1>";
     l_resp += "<div class=\"cgi\"><ul>";
@@ -136,15 +137,33 @@ void web::run()
           fprintf(stdout, "page '%s'\n", l_headers.get_url()->get_page().c_str());
 
           // Call the servlet if we have it
-          std::string l_html_response("<html><head><title>Lali web service</title></head><body>Welcome!</body></html>");
+          std::string l_html_response;
+          http_request l_responseHeaders;
           if (m_servlets.find(l_headers.get_url()->get_full_path()) != m_servlets.end())
           {
-            l_html_response = m_servlets[l_headers.get_url()->get_full_path()](l_headers.get_url()->get_page(), l_headers.get_url()->get_cgi());
+            l_html_response = m_servlets[l_headers.get_url()->get_full_path()](l_headers.get_url()->get_page(),
+                                                                               l_headers.get_url()->get_cgi(),
+                                                                               l_responseHeaders);
+          }
+          else
+          {
+            l_responseHeaders.m_code = http_request::kNotFound;
+            l_html_response =
+              "<!DOCTYPE HTML><html lang=\"en\"><head><title>Error 404</title>"
+              "<style>*{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}</style></head>"
+              "<body>"
+              "<p><b>404</b> <ins>servlet not found</ins></p>"
+              "<p>The requested servlet <code>";
+            l_html_response += l_headers.get_url()->get_full_path();
+            l_html_response +=
+              "</code> was not found on this server.</p>"
+              "</body></html>";
           }
 
-          std::string l_response("HTTP/1.1 200 Okay\r\n"
-                                 "Server: lali-web\r\n"
-                                 "Content-Type: text/html\r\n\r\n");
+          l_responseHeaders["Server"] = "lali-web";
+          l_responseHeaders["Content-Type"] = "text/html";
+
+          std::string l_response = l_responseHeaders.to_string();
           l_response += l_html_response;
 
           l_length = send(l_accepted,

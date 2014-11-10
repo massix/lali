@@ -103,6 +103,10 @@ void url::parse_cgi(std::string const & p_cgi)
   m_cgi[l_keyValue] = l_valueValue;
 }
 
+http_request::http_request() : m_valid(true), m_code(kOkay)
+{
+}
+
 http_request::http_request(std::string const & p_request) : m_valid(false)
 {
   bool l_value(false);
@@ -204,4 +208,33 @@ http_request::iterator http_request::end()
 void http_request::insert(header_t const & p_header)
 {
   m_headers[p_header.first] = p_header.second;
+}
+
+std::string & http_request::operator[](std::string const & p_key)
+{
+  return m_headers[p_key];
+}
+
+std::string http_request::to_string() const
+{
+  std::string l_ret("HTTP/1.1 ");
+  switch (m_code) {
+  case kOkay:
+    l_ret += "200 Okay";
+    break;
+  case kNotFound:
+    l_ret += "404 Not Found";
+    break;
+  }
+
+  l_ret += "\r\n";
+
+  for (value_type const & c : (*this))
+      l_ret += c.first + ": " + c.second + "\r\n";
+
+  l_ret += "\r\n";
+
+  fprintf(stdout, "headers\n%s\n", l_ret.c_str());
+
+  return l_ret;
 }

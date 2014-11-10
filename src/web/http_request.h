@@ -70,8 +70,14 @@ namespace todo
       kPost
     };
 
+    enum response_code_t {
+      kOkay = 200,
+      kNotFound = 404
+    };
+
   public:
     http_request(std::string const & p_request);
+    http_request();
     virtual ~http_request();
 
   public:
@@ -79,10 +85,12 @@ namespace todo
     http_request::const_iterator end() const;
     http_request::iterator       begin();
     http_request::iterator       end();
+    std::string & operator[](std::string const & p_key);
 
   public:
     void insert(header_t const & p_header);
     bool is_valid() const;
+    std::string to_string() const;
 
   public:
     std::shared_ptr<url> const & get_url() const { return m_url; };
@@ -92,6 +100,9 @@ namespace todo
     request_type_t       m_request;
     bool                 m_valid;
     std::shared_ptr<url> m_url;
+
+  public:
+    response_code_t      m_code;
   };
 }
 
