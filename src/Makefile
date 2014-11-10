@@ -3,7 +3,7 @@ SUBDIRS = core element exporters web
 TARGET  = lali
 target_OBJECTS = main.o
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -Ielement -Iexporters -Icore -Iweb
-LDFLAGS  = -Lcore -lcore -Lelement -lelement -Lexporters -lexporter -Lweb -lweb -lpthread
+LDFLAGS  = -Lcore -lcore -Lelement -lelement -Lexporters -lexporter -Lweb -lweb -lpthread -lstdc++
 
 .PHONY: core element exporters
 
@@ -21,5 +21,4 @@ check:
 	@for d in ${SUBDIRS}; do $(MAKE) check -C $$d; done
 
 ${TARGET}: all main.o
-	$(CXX) main.o core/*.o element/*.o exporters/*.o ${LDFLAGS} -o $@ 
-
+	$(CXX) main.o core/*.o element/*.o exporters/*.o ${LDFLAGS} -o $@

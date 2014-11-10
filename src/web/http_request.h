@@ -42,8 +42,12 @@ namespace todo
     url(std::string const & p_url);
 
   private:
-    path_t  m_path;
-    cgi_t   m_cgi;
+    path_t      m_path;
+    cgi_t       m_cgi;
+    std::string m_page;
+
+    void        parse_cgi(std::string const & p_cgi);
+    void        tokenize_path(std::string const & p_path);
   };
 
   class http_request

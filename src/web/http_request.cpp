@@ -20,12 +20,86 @@
 
 #include "http_request.h"
 #include <string>
+#include <regex>
 
 using namespace todo;
 
 url::url(std::string const & p_url)
 {
   fprintf(stdout, "Building the url starting from '%s'\n", p_url.c_str());
+  bool l_hasCGI = (p_url.find_first_of('?') != std::string::npos);
+
+  if (l_hasCGI) {
+    tokenize_path(p_url.substr(0, p_url.find_first_of('?')));
+    parse_cgi(p_url.substr(p_url.find_first_of('?') + 1));
+  }
+
+  else tokenize_path(p_url);
+
+
+  for (std::string const & l_str : m_path)
+    fprintf(stdout, "'%s'\n", l_str.c_str());
+
+  fprintf(stdout, "'page' = '%s'\n", m_page.c_str());
+
+  for (cgi_t::value_type const & l_value : m_cgi)
+    fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
+}
+
+void url::tokenize_path(std::string const & p_path)
+{
+  std::string l_path;
+  for (const char & n : p_path)
+  {
+    if (n == '/') {
+
+      if (not l_path.empty() and l_path != "/") {
+        m_path.push_back(l_path);
+        l_path.clear();
+      }
+
+      continue;
+    }
+
+    l_path += n;
+  }
+
+  if (not l_path.empty() and l_path != "/") {
+    m_page = l_path;
+  }
+}
+
+void url::parse_cgi(std::string const & p_cgi)
+{
+  bool l_value(false);
+  bool l_key(true);
+
+  std::string l_keyValue;
+  std::string l_valueValue;
+
+  for (const char & n : p_cgi)
+  {
+    if (n == '?') continue;
+
+    else if (n == '&') {
+      l_value = false;
+      l_key = true;
+      m_cgi[l_keyValue] = l_valueValue;
+      l_valueValue.clear();
+      l_keyValue.clear();
+      continue;
+    }
+    else if (n == '=') {
+      l_value = true;
+      l_key = false;
+      continue;
+    }
+
+    if (l_key) l_keyValue += n;
+    else if (l_value) l_valueValue += n;
+  }
+
+  m_cgi[l_keyValue] = l_valueValue;
 }
 
 http_request::http_request(std::string const & p_request) : m_valid(false)
