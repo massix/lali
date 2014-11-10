@@ -21,6 +21,7 @@
 #include "web.h"
 #include "http_request.h"
 #include "collection.h"
+#include "flate.h"
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
@@ -148,16 +149,16 @@ void web::run()
           else
           {
             l_responseHeaders.m_code = http_request::kNotFound;
-            l_html_response =
-              "<!DOCTYPE HTML><html lang=\"en\"><head><title>Error 404</title>"
-              "<style>*{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}</style></head>"
-              "<body>"
-              "<p><b>404</b> <ins>servlet not found</ins></p>"
-              "<p>The requested servlet <code>";
-            l_html_response += l_headers.get_url()->get_full_path();
-            l_html_response +=
-              "</code> was not found on this server.</p>"
-              "</body></html>";
+            Flate * l_flate = NULL;
+
+            flateSetFile(&l_flate, "404_template.html");
+            flateSetVar(l_flate, "servlet",
+                        l_headers.get_url()->get_full_path().c_str());
+            flateSetVar(l_flate, "page",
+                        l_headers.get_url()->get_page().c_str());
+
+            char * l_buffer = flatePage(l_flate);
+            l_html_response = l_buffer;
           }
 
           l_responseHeaders["Server"] = "lali-web";

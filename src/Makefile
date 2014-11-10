@@ -1,9 +1,14 @@
 include ../Include.make
-SUBDIRS = core element exporters web
+SUBDIRS = core element exporters flate web
 TARGET  = lali
 target_OBJECTS = main.o
 CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -Ielement -Iexporters -Icore -Iweb
-LDFLAGS  = -Lcore -lcore -Lelement -lelement -Lexporters -lexporter -Lweb -lweb -lpthread -lstdc++
+LDFLAGS  = -Lcore -lcore \
+					 -Lelement -lelement \
+					 -Lexporters -lexporter \
+           -Lflate -lflate \
+					 -Lweb -lweb \
+           -lpthread -lstdc++
 
 .PHONY: core element exporters
 

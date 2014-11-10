@@ -32,6 +32,38 @@
 
 namespace todo
 {
+  // Pseudo html-builder
+  class html
+  {
+  };
+
+  // A node in HTML
+  class node
+  {
+  public:
+    typedef std::pair<std::string, std::string>   attribute_t;
+    typedef std::vector<attribute_t>              attributes_t;
+
+    typedef attributes_t::const_iterator          const_iterator;
+    typedef attributes_t::iterator                iterator;
+    typedef attributes_t::value_type              value_type;
+
+  public:
+    const_iterator begin() const { return m_attributes.begin(); }
+    const_iterator end()   const { return m_attributes.end(); }
+    iterator       begin()       { return m_attributes.begin(); }
+    iterator       end()         { return m_attributes.end(); }
+
+  public:
+    void           push_back(value_type const & p_value) { m_attributes.push_back(p_value); }
+    std::string    to_string() const;
+
+  public:
+    attributes_t  m_attributes;
+    std::string   m_name;
+    std::string   m_content;
+  };
+
   class url
   {
   public:

@@ -1,5 +1,5 @@
 include ../../Include.make
-CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -I../element -I../exporters -I../core -I.
+CXXFLAGS = -Wall -Wextra -g -O0 -DTODO_VERSION=\"${VERSION}\" -std=c++11 -I../element -I../exporters -I../core -I../flate -I.
 PREFIX   = /usr/local
 
 compiled_OBJECTS = http_request.o web.o
