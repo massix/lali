@@ -38,6 +38,22 @@ web::web(uint32_t p_port) :
 {
   // Init the socket, for now we don't care whether the socket is valid or not
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  // Register a debug servlet
+  m_servlets["/servlet/test/"] = [](std::string const & p_page, url::cgi_t const & p_cgi)->std::string {
+    std::string l_resp("<html><head><title>Test servlet</title></head><body>");
+    l_resp += "<h1>" + p_page + "</h1>";
+    l_resp += "<div class=\"cgi\"><ul>";
+
+    for (url::cgi_t::value_type const & c : p_cgi) {
+      l_resp += "<li><b>" + c.first + "</b> = ";
+      l_resp += "<i>" + c.second + "</i></li>";
+    }
+
+    l_resp += "</ul></div></body></html>";
+
+    return l_resp;
+  };
 }
 
 void web::stop()
@@ -119,11 +135,17 @@ void web::run()
           fprintf(stdout, "path '%s'\n", l_headers.get_url()->get_full_path().c_str());
           fprintf(stdout, "page '%s'\n", l_headers.get_url()->get_page().c_str());
 
+          // Call the servlet if we have it
+          std::string l_html_response("<html><head><title>Lali web service</title></head><body>Welcome!</body></html>");
+          if (m_servlets.find(l_headers.get_url()->get_full_path()) != m_servlets.end())
+          {
+            l_html_response = m_servlets[l_headers.get_url()->get_full_path()](l_headers.get_url()->get_page(), l_headers.get_url()->get_cgi());
+          }
+
           std::string l_response("HTTP/1.1 200 Okay\r\n"
                                  "Server: lali-web\r\n"
                                  "Content-Type: text/html\r\n\r\n");
-          l_response += "<html><head><title>Lali web service</title></head>"
-            "<body>Welcome!</body></html>";
+          l_response += l_html_response;
 
           l_length = send(l_accepted,
                           l_response.c_str(),

@@ -40,7 +40,7 @@ namespace todo
 {
   class web
   {
-    typedef std::function<void(std::string const &, url::cgi_t const &)> servlet_t;
+    typedef std::function<std::string(std::string const &, url::cgi_t const &)> servlet_t;
     typedef std::map<std::string, servlet_t> servlets_t;
   public:
     web(uint32_t p_port);
