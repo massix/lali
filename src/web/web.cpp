@@ -128,9 +128,7 @@ void web::run()
           fprintf(stdout, "Size: %d\n", l_length);
           close(l_accepted);
         });
-
-        // We should remove this
-        l_thread.join();
+        l_thread.detach();
       }
     }
 
