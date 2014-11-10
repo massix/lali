@@ -3,7 +3,7 @@ CFLAGS	= -Wall
 AR	= ar -r
 RM	= rm -f
 
-all:	libflate checktpl
+all:	libflate
 
 libflate: flate.o
 	$(AR) libflate.a flate.o
@@ -12,4 +12,4 @@ flate.o: flate.c
 	$(CXX) $(CFLAGS) flate.c -c -I.
 
 clean:
-	$(RM) flate.o libflate.a checktpl
+	$(RM) flate.o libflate.a
