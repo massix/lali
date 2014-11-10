@@ -73,11 +73,15 @@ void web::run()
 
     // Reusable socket
     int yes = 1;
-    setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+    if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+    {
+      perror("setsockopt()");
+      return;
+    }
 
-    #ifdef SO_REUSEPORT
+#ifdef SO_REUSEPORT
     setsockopt(m_socket, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(int));
-    #endif
+#endif
 
     // Listen
     if (listen(m_socket, 3) == -1)
@@ -132,6 +136,8 @@ void web::run()
           fprintf(stdout, "Size: %d\n", l_length);
           close(l_accepted);
         });
+
+        // Fork it in background
         l_thread.detach();
       }
     }

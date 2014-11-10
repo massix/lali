@@ -42,27 +42,29 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
   // Special header to store the HTTP_Request
   m_headers["HTTP_Request"] = l_request;
 
+  std::string l_method = l_request.substr(0, l_request.find_first_of(' '));
+  std::string l_url = l_request.substr(l_request.find_first_of('/'));
+  l_url = l_url.substr(0, l_url.find_first_of(' '));
+  std::string l_protocol = l_request.substr(l_request.find_last_of(' ') + 1);
+
   // For now we only support GET
   m_request = kGet;
-  if (l_request.substr(0, 3) == "GET")
+  if (l_method == "GET")
   {
     m_valid = true;
   }
 
   // For now we only support HTTP/1.1
-  if (l_request.substr(l_request.size()-8) != "HTTP/1.1")
+  if (l_protocol != "HTTP/1.1")
   {
     m_valid = false;
   }
 
   // We can deduce the URL will be within the two fixed parts
   if (m_valid)
-    m_headers["URL"] = l_request.substr(4,
-                                        l_request.size() -
-                                        std::string(" HTTP/1.1").size() -
-                                        std::string("GET ").size());
+    m_headers["URL"] = l_url;
 
-  m_url.reset(new url(m_headers["URL"]));
+  m_url.reset(new url(l_url));
 
   // The stupidest parsing ever.
   for (const char & n : l_rest)
