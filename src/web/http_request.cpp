@@ -26,7 +26,6 @@ using namespace todo;
 
 url::url(std::string const & p_url)
 {
-  fprintf(stdout, "Building the url starting from '%s'\n", p_url.c_str());
   bool l_hasCGI = (p_url.find_first_of('?') != std::string::npos);
 
   if (l_hasCGI) {
@@ -35,15 +34,6 @@ url::url(std::string const & p_url)
   }
 
   else tokenize_path(p_url);
-
-
-  for (std::string const & l_str : m_path)
-    fprintf(stdout, "'%s'\n", l_str.c_str());
-
-  fprintf(stdout, "'page' = '%s'\n", m_page.c_str());
-
-  for (cgi_t::value_type const & l_value : m_cgi)
-    fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
 }
 
 void url::tokenize_path(std::string const & p_path)
@@ -67,6 +57,17 @@ void url::tokenize_path(std::string const & p_path)
   if (not l_path.empty() and l_path != "/") {
     m_page = l_path;
   }
+}
+
+std::string const url::get_full_path() const
+{
+  std::string l_path("/");
+
+  for (std::string const & c : m_path) {
+    l_path += c + "/";
+  }
+
+  return l_path;
 }
 
 void url::parse_cgi(std::string const & p_cgi)

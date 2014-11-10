@@ -27,8 +27,10 @@
 #include <sstream>
 #include "element.h"
 #include "collection.h"
+#include "http_request.h"
 #include <vector>
 #include <map>
+#include <functional>
 
 #ifndef __TESTABLE__
 #define __TESTABLE__
@@ -38,8 +40,8 @@ namespace todo
 {
   class web
   {
-    typedef std::map<std::string, collection *> servlets_t;
-
+    typedef std::function<void(std::string const &, url::cgi_t const &)> servlet_t;
+    typedef std::map<std::string, servlet_t> servlets_t;
   public:
     web(uint32_t p_port);
     void run();
@@ -48,7 +50,7 @@ namespace todo
     typedef servlets_t::const_iterator const_iterator;
     const_iterator begin() const;
     const_iterator end() const;
-    void insert(std::string const & p_key, collection const * p_collection);
+    void insert(std::string const & p_key, servlet_t p_collection);
 
   private:
     uint32_t   m_port;

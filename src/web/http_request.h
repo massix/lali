@@ -41,6 +41,12 @@ namespace todo
   public:
     url(std::string const & p_url);
 
+  public:
+    path_t const & get_path() const { return m_path; };
+    std::string const get_full_path() const;
+    std::string const & get_page() const { return m_page; };
+    cgi_t const & get_cgi() const { return m_cgi; };
+
   private:
     path_t      m_path;
     cgi_t       m_cgi;
@@ -73,8 +79,13 @@ namespace todo
     http_request::const_iterator end() const;
     http_request::iterator       begin();
     http_request::iterator       end();
+
+  public:
     void insert(header_t const & p_header);
     bool is_valid() const;
+
+  public:
+    std::shared_ptr<url> const & get_url() const { return m_url; };
 
   private:
     headers_t            m_headers;

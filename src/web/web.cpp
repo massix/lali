@@ -116,6 +116,9 @@ void web::run()
           for (http_request::value_type const & l_value : l_headers)
             fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
 
+          fprintf(stdout, "path '%s'\n", l_headers.get_url()->get_full_path().c_str());
+          fprintf(stdout, "page '%s'\n", l_headers.get_url()->get_page().c_str());
+
           std::string l_response("HTTP/1.1 200 Okay\r\n"
                                  "Server: lali-web\r\n"
                                  "Content-Type: text/html\r\n\r\n");
@@ -131,9 +134,6 @@ void web::run()
             perror("send(): ");
             return;
           }
-
-          fprintf(stdout, "Response: \n%s\n", l_response.c_str());
-          fprintf(stdout, "Size: %d\n", l_length);
           close(l_accepted);
         });
 
