@@ -26,6 +26,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <thread>
+#include <strings.h>
 
 #include <iostream>
 #include <unistd.h>
@@ -73,7 +74,10 @@ void web::run()
     // Reusable socket
     int yes = 1;
     setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+
+    #ifdef SO_REUSEPORT
     setsockopt(m_socket, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(int));
+    #endif
 
     // Listen
     if (listen(m_socket, 3) == -1)
