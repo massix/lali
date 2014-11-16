@@ -28,6 +28,7 @@
 #include "element.h"
 #include "collection.h"
 #include "http_request.h"
+#include "config.h"
 #include <vector>
 #include <map>
 #include <functional>
@@ -43,7 +44,7 @@ namespace todo
     typedef std::function<std::string(std::string const &, url::cgi_t const &, http_request &)> servlet_t;
     typedef std::map<std::string, servlet_t> servlets_t;
   public:
-    web(uint32_t p_port);
+    web(config * p_config);
     void run();
     void stop();
 
@@ -53,10 +54,12 @@ namespace todo
     void insert(std::string const & p_key, servlet_t p_collection);
 
   private:
-    uint32_t   m_port;
-    servlets_t m_servlets;
-    int        m_socket;
-    bool       m_running;
+    uint32_t    m_port;
+    std::string m_templates;
+    servlets_t  m_servlets;
+    int         m_socket;
+    bool        m_running;
+    config *    m_config;
   };
 }
 

@@ -415,7 +415,7 @@ int application::run()
   {
     case kWeb:
     {
-      g_web = new web(9090);
+      g_web = new web(m_config);
 
       auto l_handler = [](int /*p_sig*/)->void {
         g_web->stop();

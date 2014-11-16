@@ -22,6 +22,7 @@
 #include "http_request.h"
 #include "collection.h"
 #include "flate.h"
+#include "config.h"
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
@@ -34,15 +35,34 @@
 
 using namespace todo;
 
-web::web(uint32_t p_port) :
-  m_port(p_port), m_socket(0), m_running(false)
+web::web(config * p_config) :
+  m_port(p_config->getServerPort()), m_socket(0), m_running(false), m_config(p_config)
 {
   // Init the socket, for now we don't care whether the socket is valid or not
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  m_templates = (*p_config)[TEMPLATES_DIRECTORY];
+
+  // Register a dump configuration servlet
+  m_servlets["/debug/"] = [&](std::string const & /*p_page*/, url::cgi_t const & /*p_cgi*/, http_request & p_request)->std::string {
+    p_request.m_code = http_request::kOkay;
+    Flate * l_flate = NULL;
+    flateSetFile(&l_flate, std::string(m_templates + "debug_template.html").c_str());
+
+    for (config::value_type const & c_key : (*m_config)) {
+      flateSetVar(l_flate, "key", c_key.first.c_str());
+      flateSetVar(l_flate, "value", c_key.second.c_str());
+      flateDumpTableLine(l_flate, "config");
+    }
+
+    return flatePage(l_flate);
+  };
 
   // Register a debug servlet
   m_servlets["/servlet/test/"] = [](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
     p_request.m_code = http_request::kOkay;
+    if (not (p_request["Cookie"] == "TestCookie=1"))
+      p_request["Set-Cookie"] = "TestCookie=1; Max-Age=3600; Version=1";
+
     std::string l_resp("<html><head><title>Test servlet</title></head><body>");
     l_resp += "<h1>" + p_page + "</h1>";
     l_resp += "<div class=\"cgi\"><ul>";
@@ -151,7 +171,7 @@ void web::run()
             l_responseHeaders.m_code = http_request::kNotFound;
             Flate * l_flate = NULL;
 
-            flateSetFile(&l_flate, "404_template.html");
+            flateSetFile(&l_flate, std::string(m_templates + "404_template.html").c_str());
             flateSetVar(l_flate, "servlet",
                         l_headers.get_url()->get_full_path().c_str());
             flateSetVar(l_flate, "page",
@@ -161,8 +181,9 @@ void web::run()
             l_html_response = l_buffer;
           }
 
-          l_responseHeaders["Server"] = "lali-web";
+          l_responseHeaders["Server"] = "lali-web/" + std::string(TODO_VERSION);
           l_responseHeaders["Content-Type"] = "text/html";
+          l_responseHeaders["Content-Length"] = std::to_string(l_html_response.size());
 
           std::string l_response = l_responseHeaders.to_string();
           l_response += l_html_response;
@@ -172,10 +193,6 @@ void web::run()
                           l_response.size(),
                           0);
 
-          if (l_length == -1) {
-            perror("send(): ");
-            return;
-          }
           close(l_accepted);
         });
 
