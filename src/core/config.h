@@ -47,6 +47,7 @@
 #define LIST_FORMAT             "list_format"
 #define PRINT_COUNTER           "print_counter"
 #define TEMPLATES_DIRECTORY     "templates_directory"
+#define RESOURCES_DIRECTORY     "resources_directory"
 #define SERVER_WEB_PORT         "server_web_port"
 
 namespace todo

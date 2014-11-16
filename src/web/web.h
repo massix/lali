@@ -56,6 +56,7 @@ namespace todo
   private:
     uint32_t    m_port;
     std::string m_templates;
+    std::string m_resources;
     servlets_t  m_servlets;
     int         m_socket;
     bool        m_running;

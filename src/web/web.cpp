@@ -29,8 +29,10 @@
 #include <netdb.h>
 #include <thread>
 #include <strings.h>
+#include <sys/stat.h>
 
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
 
 using namespace todo;
@@ -41,10 +43,16 @@ web::web(config * p_config) :
   // Init the socket, for now we don't care whether the socket is valid or not
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_templates = (*p_config)[TEMPLATES_DIRECTORY];
+  m_resources = (*p_config)[RESOURCES_DIRECTORY];
 
   // Register a dump configuration servlet
-  m_servlets["/debug/"] = [&](std::string const & /*p_page*/, url::cgi_t const & /*p_cgi*/, http_request & p_request)->std::string {
+  m_servlets["/debug/"] = [&](std::string const & /*p_page*/,
+                              url::cgi_t const & /*p_cgi*/,
+                              http_request & p_request)->std::string {
+    fprintf(stderr, "Debug interface activated\n");
     p_request.m_code = http_request::kOkay;
+    p_request["Content-Type"] = "text/html";
+
     Flate * l_flate = NULL;
     flateSetFile(&l_flate, std::string(m_templates + "debug_template.html").c_str());
 
@@ -58,7 +66,9 @@ web::web(config * p_config) :
   };
 
   // Register a debug servlet
-  m_servlets["/servlet/test/"] = [](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+  m_servlets["/servlet/test/"] = [](std::string const & p_page,
+                                    url::cgi_t const & p_cgi,
+                                    http_request & p_request)->std::string {
     p_request.m_code = http_request::kOkay;
     if (not (p_request["Cookie"] == "TestCookie=1"))
       p_request["Set-Cookie"] = "TestCookie=1; Max-Age=3600; Version=1";
@@ -75,6 +85,34 @@ web::web(config * p_config) :
     l_resp += "</ul></div></body></html>";
 
     return l_resp;
+  };
+
+  // Resources
+  m_servlets["/resources/"] = [&](std::string const & p_page,
+                                  url::cgi_t const & /*p_cgi*/,
+                                  http_request & p_request)->std::string {
+    struct stat l_stat;
+    std::string l_resource = m_resources + p_page;
+    fprintf(stderr, "Looking for file %s\n", l_resource.c_str());
+    if (stat(l_resource.c_str(), &l_stat) == -1) {
+      p_request.m_code = http_request::kNotFound;
+      return "";
+    }
+    else {
+      std::ifstream l_file(l_resource.c_str(), std::ifstream::in);
+      std::string str;
+
+      l_file.seekg(0, std::ios::end);
+      str.reserve(l_file.tellg());
+      l_file.seekg(0, std::ios::beg);
+
+      str.assign((std::istreambuf_iterator<char>(l_file)),
+                 std::istreambuf_iterator<char>());
+
+      // TODO: Set content-type according to the extension of the file
+      p_request["Content-Type"] = "text/css";
+      return str;
+    }
   };
 }
 
@@ -160,6 +198,8 @@ void web::run()
           // Call the servlet if we have it
           std::string l_html_response;
           http_request l_responseHeaders;
+          l_responseHeaders["Content-Type"] = "text/html";
+
           if (m_servlets.find(l_headers.get_url()->get_full_path()) != m_servlets.end())
           {
             l_html_response = m_servlets[l_headers.get_url()->get_full_path()](l_headers.get_url()->get_page(),
@@ -181,8 +221,8 @@ void web::run()
             l_html_response = l_buffer;
           }
 
+
           l_responseHeaders["Server"] = "lali-web/" + std::string(TODO_VERSION);
-          l_responseHeaders["Content-Type"] = "text/html";
           l_responseHeaders["Content-Length"] = std::to_string(l_html_response.size());
 
           std::string l_response = l_responseHeaders.to_string();
