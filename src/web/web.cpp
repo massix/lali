@@ -109,8 +109,25 @@ web::web(config * p_config) :
       str.assign((std::istreambuf_iterator<char>(l_file)),
                  std::istreambuf_iterator<char>());
 
-      // TODO: Set content-type according to the extension of the file
-      p_request["Content-Type"] = "text/css";
+      std::string l_contentType = "text/plain";
+      typedef std::map<std::string, std::string> t_mime_type_map;
+
+      t_mime_type_map l_mime_types = {
+        {"css"  , "text/css" },
+        {"js"   , "application/javascript" },
+        {"html" , "text/html" },
+        {"htm"  , "text/htm" }
+      };
+
+      for (t_mime_type_map::value_type const & l_pair : l_mime_types) {
+        if (l_resource.substr(l_resource.size() - l_pair.first.size(), l_resource.size()) == l_pair.first) {
+          fprintf(stderr, "Content-Type found: %s\n", l_pair.first.c_str());
+          l_contentType = l_pair.second;
+          break;
+        }
+      }
+
+      p_request["Content-Type"] = l_contentType;
       return str;
     }
   };
