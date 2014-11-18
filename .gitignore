@@ -3,10 +3,8 @@
 *.pyc
 *.o
 *.bin
-collection_tu
-element_tu
-file_tu
-config_tu
+tests/*_tu
+src/config.h
 todo
 lali
 *.gdb*
