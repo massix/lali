@@ -13,7 +13,6 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   src/core/Makefile
-  src/element/Makefile
   src/web/Makefile
   src/exporters/Makefile
   src/flate/Makefile
