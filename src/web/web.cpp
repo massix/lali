@@ -199,6 +199,7 @@ void web::run()
           std::string l_html_response;
           http_request l_responseHeaders;
           l_responseHeaders["Content-Type"] = "text/html";
+          l_responseHeaders["Connection"] = "close";
 
           if (m_servlets.find(l_headers.get_url()->get_full_path()) != m_servlets.end())
           {
