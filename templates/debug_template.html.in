@@ -3,6 +3,7 @@
   <head>
     <title>Lali Debug Interface</title>
     <link type="text/css" href="/resources/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/resources/alert.js"></script>
   </head>
   <body>
     <h1 class="header">Great news!</h1>
@@ -13,6 +14,8 @@
         <!-- #BEGINTABLE config -->
         <tr><td class="key"><code>##key##</code></td> <td class="value"><code>##value##</code></td></tr>
         <!-- #ENDTABLE config -->
+        <tr><td class="key"><code>javascript test</code></td> <td class="value"><code><a href="javascript:show_alert()">Test Javascript</a></code></td></tr>
+      </table>
     </div>
   </body>
 </html>
