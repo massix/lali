@@ -42,6 +42,7 @@ AC_CONFIG_FILES([
   resources/Makefile
   templates/debug_template.html
   resources/lalirc
+  tests/config_test.cpp
 ])
 
 AC_OUTPUT
