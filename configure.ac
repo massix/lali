@@ -16,6 +16,7 @@ AC_CONFIG_FILES([
   src/web/Makefile
   src/exporters/Makefile
   src/flate/Makefile
+  tests/Makefile
 ])
 
 AC_OUTPUT

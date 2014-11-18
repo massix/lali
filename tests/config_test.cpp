@@ -18,7 +18,7 @@
 //
 
 
-#include "config.h"
+#include <core/config.h>
 #include <assert.h>
 #include <iostream>
 #include <stdio.h>
