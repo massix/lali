@@ -65,28 +65,6 @@ web::web(config * p_config) :
     return flatePage(l_flate);
   };
 
-  // Register a debug servlet
-  m_servlets["/servlet/test/"] = [](std::string const & p_page,
-                                    url::cgi_t const & p_cgi,
-                                    http_request & p_request)->std::string {
-    p_request.m_code = http_request::kOkay;
-    if (not (p_request["Cookie"] == "TestCookie=1"))
-      p_request["Set-Cookie"] = "TestCookie=1; Max-Age=3600; Version=1";
-
-    std::string l_resp("<html><head><title>Test servlet</title></head><body>");
-    l_resp += "<h1>" + p_page + "</h1>";
-    l_resp += "<div class=\"cgi\"><ul>";
-
-    for (url::cgi_t::value_type const & c : p_cgi) {
-      l_resp += "<li><b>" + c.first + "</b> = ";
-      l_resp += "<i>" + c.second + "</i></li>";
-    }
-
-    l_resp += "</ul></div></body></html>";
-
-    return l_resp;
-  };
-
   // Resources
   m_servlets["/resources/"] = [&](std::string const & p_page,
                                   url::cgi_t const & /*p_cgi*/,
