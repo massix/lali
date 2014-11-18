@@ -20,9 +20,9 @@
 
 #include "web.h"
 #include "http_request.h"
-#include "collection.h"
-#include "flate.h"
-#include "config.h"
+#include <element/collection.h>
+#include <flate/flate.h>
+#include <core/config.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
@@ -222,7 +222,7 @@ void web::run()
           }
 
 
-          l_responseHeaders["Server"] = "lali-web/" + std::string(TODO_VERSION);
+          l_responseHeaders["Server"] = "lali-web/" + std::string(PACKAGE_VERSION);
           l_responseHeaders["Content-Length"] = std::to_string(l_html_response.size());
 
           std::string l_response = l_responseHeaders.to_string();

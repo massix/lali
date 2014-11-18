@@ -19,7 +19,6 @@
 
 
 #include "collection.h"
-#include "search.h"
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -30,6 +29,7 @@
 #include <unistd.h>
 #include <cassert>
 #include <sys/stat.h>
+#include <core/search.h>
 
 using namespace todo;
 
