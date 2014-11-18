@@ -22,7 +22,6 @@ GTAGS
 *.~
 .dir-locals.el
 .project.ede.el
-Makefile.am
 aclocal.m4
 *.cache
 compile
