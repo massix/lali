@@ -14,8 +14,30 @@
         <!-- #BEGINTABLE config -->
         <tr><td class="key"><code>##key##</code></td> <td class="value"><code>##value##</code></td></tr>
         <!-- #ENDTABLE config -->
-        <tr><td class="key"><code>javascript test</code></td> <td class="value"><code><a href="javascript:show_alert()">Test Javascript</a></code></td></tr>
-        <tr><td class="key"><code>static page test</code></td> <td class="value"><code><a href="static_page.htm">Test static page</a></code></td></tr>
+        <tr>
+          <td class="key">
+            <code>javascript test</code>
+          </td>
+          <td class="value">
+            <code><a href="javascript:show_alert()">Test Javascript</a></code>
+          </td>
+        </tr>
+        <tr>
+          <td class="key">
+            <code>static page test</code>
+          </td>
+          <td class="value">
+            <code><a href="static_page.htm">Test static page</a></code>
+          </td>
+        </tr>
+        <tr>
+          <td class="key">
+            <code>lali version</code>
+          </td>
+          <td class="value">
+            <code>@PACKAGE_STRING@</code>
+          </td>
+        </tr>
       </table>
     </div>
   </body>
