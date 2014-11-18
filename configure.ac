@@ -38,6 +38,9 @@ AC_CONFIG_FILES([
   src/exporters/Makefile
   src/flate/Makefile
   tests/Makefile
+  templates/debug_template.html
+  templates/Makefile
+  resources/Makefile
 ])
 
 AC_OUTPUT
