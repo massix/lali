@@ -20,7 +20,7 @@
 
 #include "web.h"
 #include "http_request.h"
-#include <element/collection.h>
+#include <core/collection.h>
 #include <flate/flate.h>
 #include <core/config.h>
 #include <sys/socket.h>

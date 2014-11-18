@@ -29,8 +29,6 @@
 #include <vector>
 #include <map>
 #include <functional>
-#include <element/element.h>
-#include <element/collection.h>
 #include <core/config.h>
 
 #ifndef __TESTABLE__

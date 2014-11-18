@@ -30,10 +30,10 @@
 
 #include <config.h>
 #include <core/config.h>
-#include <exporters/txt_exporter.h>
+#include <core/element.h>
+#include <core/collection.h>
 #include <web/web.h>
-#include <element/element.h>
-#include <element/collection.h>
+#include <exporters/txt_exporter.h>
 
 using namespace todo;
 
