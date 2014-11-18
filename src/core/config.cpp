@@ -52,6 +52,9 @@ config::config(std::string const & p_filename) :
   (*this)(MONOCHROME)               = "false";
   (*this)(PRINT_COUNTER)            = "true";
   (*this)(LIST_FORMAT)              = "   @ID@   @TITLE@@IF_BODY@ (@BODY@)@END_IF_BODY@ [@PRIORITY_TEXT@]";
+  (*this)(TEMPLATES_DIRECTORY)      = "./templates/";
+  (*this)(RESOURCES_DIRECTORY)      = "./resources/";
+  (*this)(SERVER_WEB_PORT)          = "8080";
 }
 
 bool config::parse_config()
@@ -143,7 +146,18 @@ bool config::parse_config()
     {
       (*this)(MONOCHROME) = l_string.substr(l_string.find('=') + 2, l_string.size());
     }
-
+    else if (l_string.substr(0, strlen(TEMPLATES_DIRECTORY)) == TEMPLATES_DIRECTORY)
+    {
+      (*this)(TEMPLATES_DIRECTORY) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(SERVER_WEB_PORT)) == SERVER_WEB_PORT)
+    {
+      (*this)(SERVER_WEB_PORT) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
+    else if (l_string.substr(0, strlen(RESOURCES_DIRECTORY)) == RESOURCES_DIRECTORY)
+    {
+      (*this)(RESOURCES_DIRECTORY) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    }
     else
     {
       l_ret = false;
@@ -165,6 +179,11 @@ std::string const & config::operator[](std::string const & p_key)
 std::string & config::operator()(std::string const & p_key)
 {
   return std::map<std::string, std::string>::operator[](p_key);
+}
+
+uint32_t config::getServerPort()
+{
+  return atoi((*this)[SERVER_WEB_PORT].c_str());
 }
 
 bool config::isKeyTrue(std::string const & p_key)

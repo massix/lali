@@ -28,4 +28,9 @@ priority_low_text = doesn't matter
 priority_default_text = look at it
 priority_high_text = do it now!
 
+# Web stuff
+templates_directory = @prefix@/share/lali/templates/
+resources_directory = @prefix@/share/lali/resources/
+server_web_port = 3030
+
 # This is another comment

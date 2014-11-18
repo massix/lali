@@ -26,7 +26,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
-#include "exporter.h"
+#include <exporters/exporter.h>
 
 namespace todo
 {
@@ -76,7 +76,8 @@ class application
       kModify,
       kList,
       kSearch,
-      kExport
+      kExport,
+      kWeb
     } m_action;
 
     bool fill_parameters(int argc, char *argv[]);

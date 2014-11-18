@@ -1,0 +1,40 @@
+body {
+    font-family: Helvetica;
+    margin-left: 4em;
+    margin-right: 4em;
+}
+
+h1.header {
+    text-align: center;
+    border-style: none;
+    border-width: 1px;
+    border-style: solid;
+    background: lightgray;
+    padding: 10px;
+    font-size: 1.2em;
+}
+
+table.dump {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.dump th {
+    border-bottom: solid;
+    border-width: 1px;
+    text-align: left;
+    padding: 4px;
+}
+
+td.key, td.value {
+    text-align: left;
+    border-bottom: 1px dotted black;
+    padding: 3px;
+}
+
+div#container {
+    width: 95%;
+    padding: 10px;
+    border-width: 1px;
+    border-style: none;
+}

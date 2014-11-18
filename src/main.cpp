@@ -18,18 +18,7 @@
 //
 
 
-#include "collection.h"
-#include "element.h"
-#include "application.h"
-
-#include <fstream>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <map>
-
-#define CONFIG_FILE ".todorc"
+#include <core/application.h>
 
 int main(int argc, char *argv[])
 {

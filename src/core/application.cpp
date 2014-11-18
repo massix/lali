@@ -18,18 +18,26 @@
 //
 
 
-#include "element.h"
 #include "application.h"
-#include "collection.h"
-#include "config.h"
-#include "txt_exporter.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include <signal.h>
+#include <functional>
+
+#include <config.h>
+#include <core/config.h>
+#include <core/element.h>
+#include <core/collection.h>
+#include <web/web.h>
+#include <exporters/txt_exporter.h>
 
 using namespace todo;
+
+static web * g_web;
 
 application::application(int argc, char *argv[])
 {
@@ -220,6 +228,8 @@ bool application::fill_parameters(int argc, char *argv[])
     m_action = kSearch;
   else if (m_parameters.m_action == "export" or m_parameters.m_action == "e")
     m_action = kExport;
+  else if (m_parameters.m_action == "web" or m_parameters.m_action == "w")
+    m_action = kWeb;
   else if (m_parameters.m_action == "list" or m_parameters.m_action == "l" or m_parameters.m_action.empty())
     m_action = kList;
   else if (m_parameters.m_action == "help" or
@@ -298,7 +308,7 @@ void application::print_usage()
 
   else
   {
-    printf("     -[ LALI version %s ]-\n", TODO_VERSION);
+    printf("     -[ LALI version %s ]-\n", PACKAGE_VERSION);
     printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
     printf("  List of available actions\n");
     printf("         list   | l                  list all notes in the db\n");
@@ -307,6 +317,7 @@ void application::print_usage()
     printf("       delete   | d <parameters>     delete a given note\n");
     printf("       search   | s <parameters>     search for given text in notes\n");
     printf("       export   | e <parameters>     exports the current db in a different format\n");
+    printf("          web   | w <parameters>     start the web service\n");
     printf("\n");
     printf(" List of available parameters\n");
     printf("     --format   | -f <format>        format to use (see documentation)\n");
@@ -405,6 +416,25 @@ int application::run()
 
   switch (m_action)
   {
+    case kWeb:
+    {
+      g_web = new web(m_config);
+
+      auto l_handler = [](int /*p_sig*/)->void {
+        g_web->stop();
+      };
+
+      // Catch signals to stop the server
+      signal(SIGTERM, l_handler);
+      signal(SIGHUP, l_handler);
+      signal(SIGTRAP, l_handler);
+      signal(SIGINT, l_handler);
+      signal(SIGQUIT, l_handler);
+      signal(SIGKILL, l_handler);
+
+      g_web->run();
+      break;
+    }
     case kList:
     {
       if (m_parameters.m_priority > 2) {

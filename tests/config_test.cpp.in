@@ -18,7 +18,7 @@
 //
 
 
-#include "config.h"
+#include <core/config.h>
 #include <assert.h>
 #include <iostream>
 #include <stdio.h>
@@ -26,7 +26,7 @@
 
 int main()
 {
-  todo::config l_config("../config_file.example.todo");
+  todo::config l_config("@abs_top_builddir@/resources/lalirc");
   assert(l_config.parse_config() == true);
 
   assert(l_config[FILE_NOTES_DB] == "./notes.bin");
@@ -47,10 +47,13 @@ int main()
   assert(l_config[PRIORITY_HIGH_TEXT] == "do it now!");
 
   assert(l_config[LIST_FORMAT] == "[@ID@] @TITLE@ @IF_BODY@: @BODY@ :@END_IF_BODY@ @PRIORITY_TEXT@");
+  assert(l_config[TEMPLATES_DIRECTORY] == "@prefix@/share/lali/templates/");
+  assert(l_config[RESOURCES_DIRECTORY] == "@prefix@/share/lali/resources/");
 
   assert(l_config.isAskForConfirmation() == true);
   assert(l_config.isMonochrome() == true);
   assert(l_config.isCounterPrintable() == false);
+  assert(l_config.getServerPort() == 3030);
 
   return 0;
 }

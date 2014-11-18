@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <title>Lali Debug Interface</title>
+    <link type="text/css" href="/resources/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <h1 class="header">Great news!</h1>
+    <div id="container">
+      <p><b>Lali web version @PACKAGE_VERSION@ is running</b>, here is a dump of the configuration</p>
+      <table class="dump">
+        <tr><th>Key</th><th>Value</th></tr>
+        <!-- #BEGINTABLE config -->
+        <tr><td class="key"><code>##key##</code></td> <td class="value"><code>##value##</code></td></tr>
+        <!-- #ENDTABLE config -->
+    </div>
+  </body>
+</html>
