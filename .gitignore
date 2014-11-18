@@ -31,3 +31,8 @@ depcomp
 install-sh
 missing
 Makefile.in
+Makefile
+*.deps
+stamp-h1
+*.log
+*.status
