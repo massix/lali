@@ -52,6 +52,9 @@ namespace todo
     void insert(std::string const & p_key, servlet_t p_collection);
 
   private:
+    bool get_content_of_file(std::string const & p_file, std::string & p_content, std::string & p_mime);
+
+  private:
     uint32_t    m_port;
     std::string m_templates;
     std::string m_resources;

@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <title>Lali Debug Interface</title>
+    <link type="text/css" href="/resources/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/resources/alert.js"></script>
+  </head>
+  <body>
+    <h1 class="header">Great news!</h1>
+    <div id="container">
+      <p><b>Lali web version @PACKAGE_VERSION@ is running</b>, and this is just a static page.</p>
+      <p>Click <a href="/debug/">here</a> to get back to where you were!</p>
+      <p>Click <a href="javascript:show_alert()">here</a> to show a nice dialog.</p>
+    </div>
+  </body>
+</html>

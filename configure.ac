@@ -41,6 +41,7 @@ AC_CONFIG_FILES([
   templates/Makefile
   resources/Makefile
   templates/debug_template.html
+  templates/static_page.htm
   resources/lalirc
   tests/config_test.cpp
 ])
