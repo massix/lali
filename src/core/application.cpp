@@ -18,12 +18,8 @@
 //
 
 
-#include "element.h"
 #include "application.h"
-#include "collection.h"
-#include "config.h"
-#include "txt_exporter.h"
-#include "web.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -31,6 +27,13 @@
 #include <iostream>
 #include <signal.h>
 #include <functional>
+
+#include <config.h>
+#include <core/config.h>
+#include <core/element.h>
+#include <core/collection.h>
+#include <web/web.h>
+#include <exporters/txt_exporter.h>
 
 using namespace todo;
 
@@ -305,7 +308,7 @@ void application::print_usage()
 
   else
   {
-    printf("     -[ LALI version %s ]-\n", TODO_VERSION);
+    printf("     -[ LALI version %s ]-\n", PACKAGE_VERSION);
     printf("Usage: %s <action> [parameters]\n", m_appname.c_str());
     printf("  List of available actions\n");
     printf("         list   | l                  list all notes in the db\n");

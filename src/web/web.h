@@ -21,17 +21,15 @@
 #ifndef _WEB_H_
 #define _WEB_H_
 
+#include "http_request.h"
 #include <string>
 #include <stdint.h>
 #include <iostream>
 #include <sstream>
-#include "element.h"
-#include "collection.h"
-#include "http_request.h"
-#include "config.h"
 #include <vector>
 #include <map>
 #include <functional>
+#include <core/config.h>
 
 #ifndef __TESTABLE__
 #define __TESTABLE__

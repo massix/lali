@@ -19,8 +19,8 @@
 
 #define __TESTABLE__ public:
 
-#include "element.h"
-#include "collection.h"
+#include <core/element.h>
+#include <core/collection.h>
 #include <assert.h>
 #include <iostream>
 #include <stdio.h>
