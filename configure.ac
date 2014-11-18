@@ -1,3 +1,4 @@
+AC_PREREQ([2.68])
 AC_INIT([lali], [0.7.0dev], [massimo.gengarelli@gmail.com])
 AM_INIT_AUTOMAKE
 
@@ -7,7 +8,21 @@ AM_PROG_CC_C_O
 AC_PROG_RANLIB
 AC_C_CONST
 
-AC_CONFIG_HEADERS(src/config.h)
+AC_CHECK_HEADERS([pthread.h arpa/inet.h netdb.h stdint.h stdlib.h string.h strings.h sys/socket.h unistd.h])
+AC_CONFIG_HEADERS([src/config.h])
+AC_CONFIG_SRCDIR([src/config.h.in])
+AC_HEADER_STDBOOL
+AC_TYPE_INT32_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+
+
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_CHECK_FUNCS([bzero memmove memset select socket strcasecmp strdup])
+
 
 AC_CONFIG_FILES([
   Makefile

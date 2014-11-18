@@ -36,3 +36,4 @@ Makefile
 stamp-h1
 *.log
 *.status
+.build
