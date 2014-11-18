@@ -41,6 +41,7 @@ AC_CONFIG_FILES([
   templates/debug_template.html
   templates/Makefile
   resources/Makefile
+  resources/lalirc
 ])
 
 AC_OUTPUT
