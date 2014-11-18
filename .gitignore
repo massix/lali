@@ -23,6 +23,7 @@ GTAGS
 .dir-locals.el
 .project.ede.el
 aclocal.m4
+autom4te.cache
 *.cache
 compile
 configure
