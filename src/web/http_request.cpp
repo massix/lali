@@ -23,22 +23,6 @@
 
 using namespace todo;
 
-std::string node::to_string() const
-{
-  std::string l_ret("<");
-  l_ret += m_name + "";
-
-  for (attribute_t const & c_attribute : m_attributes) {
-    l_ret += " " + c_attribute.first;
-    l_ret += "\"" + c_attribute.second + "\"";
-  }
-
-  l_ret += ">" + m_content;
-  l_ret += "</" + m_name + ">";
-
-  return l_ret;
-}
-
 url::url(std::string const & p_url)
 {
   bool l_hasCGI = (p_url.find_first_of('?') != std::string::npos);
