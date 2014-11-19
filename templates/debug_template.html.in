@@ -39,6 +39,8 @@
           </td>
         </tr>
       </table>
+      <p class="footer">And here is a beautiful Debian's logo for you</p>
+      <center><img src="/resources/Debian.png"/></center>
     </div>
   </body>
 </html>

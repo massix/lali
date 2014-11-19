@@ -38,3 +38,7 @@ div#container {
     border-width: 1px;
     border-style: none;
 }
+
+span.footer {
+    text-align: center;
+}

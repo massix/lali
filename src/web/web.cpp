@@ -45,9 +45,7 @@ web::web(config * p_config) :
   m_templates = (*p_config)[TEMPLATES_DIRECTORY];
   m_resources = (*p_config)[RESOURCES_DIRECTORY];
   // Register a dump configuration servlet
-  m_servlets["/debug/"] = [&](std::string const & p_page,
-                              url::cgi_t const & /*p_cgi*/,
-                              http_request & p_request)->std::string {
+  m_servlets["/debug/"] = [&](std::string const & p_page, url::cgi_t const & /*p_cgi*/, http_request & p_request)->std::string {
     std::string l_ret;
     std::string l_contentType = "text/html";
     p_request.m_code = http_request::kOkay;
@@ -74,9 +72,7 @@ web::web(config * p_config) :
   };
 
   // Resources
-  m_servlets["/resources/"] = [&](std::string const & p_page,
-                                  url::cgi_t const & /*p_cgi*/,
-                                  http_request & p_request)->std::string {
+  m_servlets["/resources/"] = [&](std::string const & p_page, url::cgi_t const & /*p_cgi*/, http_request & p_request)->std::string {
     std::string l_resource = m_resources + p_page;
 
     std::string l_contentType;
@@ -100,7 +96,7 @@ bool web::get_content_of_file(std::string const & p_file, std::string & p_conten
   if (stat(p_file.c_str(), &l_stat) == -1)
     return false;
 
-  std::ifstream l_file(p_file.c_str(), std::ifstream::in);
+  std::ifstream l_file(p_file.c_str(), std::ifstream::in | std::ifstream::binary);
 
   l_file.seekg(0, std::ios::end);
   p_content.resize(l_file.tellg());
@@ -115,7 +111,8 @@ bool web::get_content_of_file(std::string const & p_file, std::string & p_conten
     {"css"  , "text/css" },
     {"js"   , "application/javascript" },
     {"html" , "text/html" },
-    {"htm"  , "text/html" }
+    {"htm"  , "text/html" },
+    {"png"  , "image/png" }
   };
 
   p_mime = "text/plain";
