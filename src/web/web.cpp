@@ -44,13 +44,12 @@ web::web(config * p_config) :
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_templates = (*p_config)[TEMPLATES_DIRECTORY];
   m_resources = (*p_config)[RESOURCES_DIRECTORY];
-  std::string l_ret;
-  std::string l_contentType = "text/html";
-
   // Register a dump configuration servlet
   m_servlets["/debug/"] = [&](std::string const & p_page,
                               url::cgi_t const & /*p_cgi*/,
                               http_request & p_request)->std::string {
+    std::string l_ret;
+    std::string l_contentType = "text/html";
     p_request.m_code = http_request::kOkay;
 
     if (p_page.empty()) {
@@ -65,8 +64,7 @@ web::web(config * p_config) :
 
       l_ret = flatePage(l_flate);
     }
-    else if (not get_content_of_file(m_templates + p_page, l_ret, l_contentType))
-    {
+    else if (not get_content_of_file(m_templates + p_page, l_ret, l_contentType)) {
       p_request.m_code = http_request::kNotFound;
       l_ret = "Page not found";
     }
@@ -98,8 +96,6 @@ web::web(config * p_config) :
 bool web::get_content_of_file(std::string const & p_file, std::string & p_content, std::string & p_mime)
 {
   struct stat l_stat;
-  fprintf(stderr, "Looking for file %s\n", p_file.c_str());
-  p_content.clear();
 
   if (stat(p_file.c_str(), &l_stat) == -1)
     return false;
@@ -107,11 +103,12 @@ bool web::get_content_of_file(std::string const & p_file, std::string & p_conten
   std::ifstream l_file(p_file.c_str(), std::ifstream::in);
 
   l_file.seekg(0, std::ios::end);
-  p_content.reserve(l_file.tellg());
+  p_content.resize(l_file.tellg());
   l_file.seekg(0, std::ios::beg);
 
   p_content.assign((std::istreambuf_iterator<char>(l_file)),
                    std::istreambuf_iterator<char>());
+
 
   typedef std::map<std::string, std::string> t_mime_type_map;
   t_mime_type_map l_mime_types = {
@@ -124,8 +121,8 @@ bool web::get_content_of_file(std::string const & p_file, std::string & p_conten
   p_mime = "text/plain";
   for (t_mime_type_map::value_type const & l_pair : l_mime_types) {
     if (p_file.substr(p_file.size() - l_pair.first.size(), p_file.size()) == l_pair.first) {
-      fprintf(stderr, "Content-Type found: %s\n", l_pair.first.c_str());
       p_mime = l_pair.second;
+      fprintf(stderr, "Mime type: %s\n", l_pair.second.c_str());
       break;
     }
   }
