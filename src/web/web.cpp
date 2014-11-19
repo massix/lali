@@ -30,6 +30,7 @@
 #include <thread>
 #include <strings.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include <iostream>
 #include <fstream>
@@ -211,10 +212,19 @@ void web::run()
 
           // Check if we are waiting for a body too (POST)
           if (l_headers.m_request == http_request::kPost) {
+            // Set non-blocking socket in order to avoid infinite wait
+            int flags;
+            flags = fcntl(l_accepted, F_GETFL, 0);
+            fcntl(l_accepted, F_SETFL, flags | O_NONBLOCK);
+
             l_request.resize(atoi(l_headers["Content-Length"].c_str()));
             l_length = recv(l_accepted, (void *) l_request.data(), l_request.size(), 0);
-            fprintf(stderr, "Received body: %s\n", l_request.c_str());
-            l_headers.get_url()->parse_cgi(l_request);
+            fprintf(stderr, "Length of body: %d\n", l_length);
+
+            if (l_length != -1) {
+              fprintf(stderr, "Received body: %s\n", l_request.c_str());
+              l_headers.get_url()->parse_cgi(l_request);
+            }
           }
 
           // Call the servlet if we have it

@@ -124,6 +124,7 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
   std::string l_url = l_request.substr(l_request.find_first_of('/'));
   l_url = l_url.substr(0, l_url.find_first_of(' '));
   std::string l_protocol = l_request.substr(l_request.find_last_of(' ') + 1);
+  std::string l_last_line;
 
   // For now we only support GET
   m_request = kGet;
@@ -160,14 +161,18 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
 
       l_keyValue.clear();
       l_valueValue.clear();
+      l_last_line.clear();
       continue;
     }
 
+    l_last_line += n;
     if (l_key) l_keyValue += n;
     if (l_value) l_valueValue += n;
   }
 
   fprintf(stderr, "Full request was\n%s\n", p_request.c_str());
+  if (not l_last_line.empty())
+    m_url->parse_cgi(l_last_line);
 }
 
 http_request::~http_request()
