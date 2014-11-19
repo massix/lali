@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" encoding="utf-8">
   <head>
     <title>Lali Debug Interface</title>
     <link type="text/css" href="/resources/style.css" rel="stylesheet">
@@ -38,7 +38,18 @@
             <code>@PACKAGE_STRING@</code>
           </td>
         </tr>
+        <!-- #BEGINTABLE cgi -->
+        <tr><td class="cgi_key"><code>##cgi_key##</code></td><td class="cgi_value"><code>##cgi_value##</code></td></tr>
+        <!-- #ENDTABLE cgi -->
       </table>
+
+      <p class="form">Here is a form to fill to test the POST action</p>
+      <form action="/debug/" method="post" class="test">
+        <input type="text" placeholder="This is the first field" name="first_post_field"/>
+        <input type="text" placeholder="This is the second field" name="second_post_field"/><br />
+        <input type="submit" name="submit" value="Test"/>
+      </form>
+
       <p class="footer">And here is a beautiful Debian's logo for you</p>
       <center><img src="/resources/Debian.png"/></center>
     </div>

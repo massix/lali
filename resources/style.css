@@ -32,6 +32,13 @@ td.key, td.value {
     padding: 3px;
 }
 
+td.cgi_key, td.cgi_value {
+    text-align: left;
+    border-bottom: 1px dotted black;
+    padding: 3px;
+    background-color: lightyellow;
+}
+
 div#container {
     width: 95%;
     padding: 10px;

@@ -46,13 +46,13 @@ namespace todo
     std::string const get_full_path() const;
     std::string const & get_page() const { return m_page; };
     cgi_t const & get_cgi() const { return m_cgi; };
+    void        parse_cgi(std::string const & p_cgi);
 
   private:
     path_t      m_path;
     cgi_t       m_cgi;
     std::string m_page;
 
-    void        parse_cgi(std::string const & p_cgi);
     void        tokenize_path(std::string const & p_path);
   };
 
@@ -94,10 +94,10 @@ namespace todo
 
   public:
     std::shared_ptr<url> const & get_url() const { return m_url; };
+    request_type_t       m_request;
 
   private:
     headers_t            m_headers;
-    request_type_t       m_request;
     bool                 m_valid;
     std::shared_ptr<url> m_url;
 

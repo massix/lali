@@ -127,15 +127,9 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
 
   // For now we only support GET
   m_request = kGet;
-  if (l_method == "GET")
+  if (l_method == "POST")
   {
-    m_valid = true;
-  }
-
-  // For now we only support HTTP/1.1
-  if (l_protocol != "HTTP/1.1")
-  {
-    m_valid = false;
+    m_request = kPost;
   }
 
   // We can deduce the URL will be within the two fixed parts
@@ -172,6 +166,8 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
     if (l_key) l_keyValue += n;
     if (l_value) l_valueValue += n;
   }
+
+  fprintf(stderr, "Full request was\n%s\n", p_request.c_str());
 }
 
 http_request::~http_request()
@@ -232,8 +228,6 @@ std::string http_request::to_string() const
       l_ret += c.first + ": " + c.second + "\r\n";
 
   l_ret += "\r\n";
-
-  fprintf(stdout, "headers\n%s\n", l_ret.c_str());
 
   return l_ret;
 }

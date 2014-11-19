@@ -44,8 +44,9 @@ web::web(config * p_config) :
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_templates = (*p_config)[TEMPLATES_DIRECTORY];
   m_resources = (*p_config)[RESOURCES_DIRECTORY];
+
   // Register a dump configuration servlet
-  m_servlets["/debug/"] = [&](std::string const & p_page, url::cgi_t const & /*p_cgi*/, http_request & p_request)->std::string {
+  m_servlets["/debug/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
     std::string l_ret;
     std::string l_contentType = "text/html";
     p_request.m_code = http_request::kOkay;
@@ -58,6 +59,14 @@ web::web(config * p_config) :
         flateSetVar(l_flate, "key", c_key.first.c_str());
         flateSetVar(l_flate, "value", c_key.second.c_str());
         flateDumpTableLine(l_flate, "config");
+      }
+
+      for (url::cgi_t::value_type const & l_value : p_cgi) {
+        if (l_value.first != "submit") {
+          flateSetVar(l_flate, "cgi_key", l_value.first.c_str());
+          flateSetVar(l_flate, "cgi_value", l_value.second.c_str());
+          flateDumpTableLine(l_flate, "cgi");
+        }
       }
 
       l_ret = flatePage(l_flate);
@@ -119,7 +128,6 @@ bool web::get_content_of_file(std::string const & p_file, std::string & p_conten
   for (t_mime_type_map::value_type const & l_pair : l_mime_types) {
     if (p_file.substr(p_file.size() - l_pair.first.size(), p_file.size()) == l_pair.first) {
       p_mime = l_pair.second;
-      fprintf(stderr, "Mime type: %s\n", l_pair.second.c_str());
       break;
     }
   }
@@ -151,18 +159,18 @@ void web::run()
     tv.tv_sec = 3;
     tv.tv_usec = 1000;
 
-    // Bind the socket
-    if (bind(m_socket, (struct sockaddr *) &l_serverAddress, sizeof(l_serverAddress)) == -1)
-    {
-      perror("bind(): ");
-      return;
-    }
-
     // Reusable socket
     int yes = 1;
     if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
     {
       perror("setsockopt()");
+      return;
+    }
+
+    // Bind the socket
+    if (bind(m_socket, (struct sockaddr *) &l_serverAddress, sizeof(l_serverAddress)) == -1)
+    {
+      perror("bind(): ");
       return;
     }
 
@@ -200,11 +208,14 @@ void web::run()
 
           // If we are here, we have a request to handle
           http_request l_headers(l_request);
-          for (http_request::value_type const & l_value : l_headers)
-            fprintf(stdout, "'%s' = '%s'\n", l_value.first.c_str(), l_value.second.c_str());
 
-          fprintf(stdout, "path '%s'\n", l_headers.get_url()->get_full_path().c_str());
-          fprintf(stdout, "page '%s'\n", l_headers.get_url()->get_page().c_str());
+          // Check if we are waiting for a body too (POST)
+          if (l_headers.m_request == http_request::kPost) {
+            l_request.resize(atoi(l_headers["Content-Length"].c_str()));
+            l_length = recv(l_accepted, (void *) l_request.data(), l_request.size(), 0);
+            fprintf(stderr, "Received body: %s\n", l_request.c_str());
+            l_headers.get_url()->parse_cgi(l_request);
+          }
 
           // Call the servlet if we have it
           std::string l_html_response;
