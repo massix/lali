@@ -1,0 +1,12 @@
+language: c++
+script:
+  - aclocal
+  - automake --add-missing
+  - autoconf
+  - mkdir .build
+  - cd .build
+  - ../configure --prefix=$(pwd)/install
+  - make
+  - make install
+  - cd tests
+  - make test_all
