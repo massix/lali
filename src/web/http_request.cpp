@@ -20,6 +20,7 @@
 
 #include "http_request.h"
 #include <string>
+#include <syslog.h>
 
 using namespace todo;
 
@@ -170,7 +171,7 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
     if (l_value) l_valueValue += n;
   }
 
-  fprintf(stderr, "Full request was\n%s\n", p_request.c_str());
+  syslog(LOG_DEBUG, "Full request was\n%s\n", p_request.c_str());
   if (not l_last_line.empty())
     m_url->parse_cgi(l_last_line);
 }
@@ -217,6 +218,19 @@ std::string & http_request::operator[](std::string const & p_key)
 
 std::string http_request::to_string() const
 {
+  std::string l_ret = code_to_string();
+  l_ret += "\r\n";
+
+  for (value_type const & c : (*this))
+      l_ret += c.first + ": " + c.second + "\r\n";
+
+  l_ret += "\r\n";
+
+  return l_ret;
+}
+
+std::string http_request::code_to_string() const
+{
   std::string l_ret("HTTP/1.1 ");
   switch (m_code) {
   case kOkay:
@@ -226,13 +240,6 @@ std::string http_request::to_string() const
     l_ret += "404 Not Found";
     break;
   }
-
-  l_ret += "\r\n";
-
-  for (value_type const & c : (*this))
-      l_ret += c.first + ": " + c.second + "\r\n";
-
-  l_ret += "\r\n";
 
   return l_ret;
 }

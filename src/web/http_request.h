@@ -91,6 +91,7 @@ namespace todo
     void insert(header_t const & p_header);
     bool is_valid() const;
     std::string to_string() const;
+    std::string code_to_string() const;
 
   public:
     std::shared_ptr<url> const & get_url() const { return m_url; };
