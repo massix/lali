@@ -23,6 +23,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
+#include <list>
+#include <algorithm>
 
 int main()
 {
@@ -54,6 +56,10 @@ int main()
   assert(l_config.isMonochrome() == true);
   assert(l_config.isCounterPrintable() == false);
   assert(l_config.getServerPort() == 3030);
+
+  std::list<std::string> l_servlets = l_config.getListOfServlets();
+  assert(l_servlets.size() == 5);
+  assert(std::find(l_servlets.begin(), l_servlets.end(), "private") != l_servlets.end());
 
   return 0;
 }

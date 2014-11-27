@@ -33,4 +33,7 @@ templates_directory = @prefix@/share/lali/templates/
 resources_directory = @prefix@/share/lali/resources/
 server_web_port = 3030
 
+# Servlets configuration
+servlet_list        = default work private personal groceries
+
 # This is another comment

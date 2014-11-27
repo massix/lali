@@ -28,9 +28,38 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
+#include <algorithm>
 
 using namespace todo;
+
+std::list<std::string> keys =
+{
+  NOTE_ID_COLOR,
+  NOTE_ID_FORMAT,
+  NOTE_TITLE_COLOR,
+  NOTE_COUNT_COLOR,
+  NOTE_BODY_COLOR,
+  PRIORITY_LOW_COLOR,
+  PRIORITY_DEFAULT_COLOR,
+  PRIORITY_HIGH_COLOR,
+  PRIORITY_LOW_TEXT,
+  PRIORITY_HIGH_TEXT,
+  PRIORITY_DEFAULT_TEXT,
+  NOTE_SEARCH_COLOR,
+  FILE_NOTES_DB,
+  ALWAYS_ASK_CONFIRMATION,
+  MONOCHROME,
+  LIST_FORMAT,
+  PRINT_COUNTER,
+  TEMPLATES_DIRECTORY,
+  RESOURCES_DIRECTORY,
+  SERVER_WEB_PORT,
+  SERVLET_LIST
+};
+
+config::~config()
+{
+}
 
 config::config(std::string const & p_filename) :
   m_config_file(p_filename)
@@ -55,6 +84,7 @@ config::config(std::string const & p_filename) :
   (*this)(TEMPLATES_DIRECTORY)      = "./templates/";
   (*this)(RESOURCES_DIRECTORY)      = "./resources/";
   (*this)(SERVER_WEB_PORT)          = "8080";
+  (*this)(SERVLET_LIST)             = "default";
 }
 
 bool config::parse_config()
@@ -77,103 +107,64 @@ bool config::parse_config()
     l_file.getline(l_line, 1024);
     if (l_line[0] == '#' or l_line[0] == ' ' or l_line[0] == '\0') continue;
     std::string l_string(l_line);
+    l_ret = false;
 
-    if (l_string.substr(0, strlen(FILE_NOTES_DB)) == FILE_NOTES_DB)
-    {
-      (*this)(FILE_NOTES_DB) = l_string.substr(l_string.find('=') + 2, l_string.size());
+    for (std::string const & l_key : keys) {
+      if (l_string.substr(0, l_key.size()) == l_key) {
+        (*this)(l_key) = l_string.substr(l_string.find('=') + 2, l_string.size());
+        l_ret = true;
+      }
     }
-    else if (l_string.substr(0, strlen(NOTE_COUNT_COLOR)) == NOTE_COUNT_COLOR)
-    {
-      (*this)(NOTE_COUNT_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(NOTE_ID_COLOR)) == NOTE_ID_COLOR)
-    {
-      (*this)(NOTE_ID_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(NOTE_ID_FORMAT)) == NOTE_ID_FORMAT)
-    {
-      (*this)(NOTE_ID_FORMAT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(NOTE_TITLE_COLOR)) == NOTE_TITLE_COLOR)
-    {
-      (*this)(NOTE_TITLE_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(NOTE_BODY_COLOR)) == NOTE_BODY_COLOR)
-    {
-      (*this)(NOTE_BODY_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(NOTE_SEARCH_COLOR)) == NOTE_SEARCH_COLOR)
-    {
-      (*this)(NOTE_SEARCH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_LOW_COLOR)) == PRIORITY_LOW_COLOR)
-    {
-      (*this)(PRIORITY_LOW_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_DEFAULT_COLOR)) == PRIORITY_DEFAULT_COLOR)
-    {
-      (*this)(PRIORITY_DEFAULT_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_HIGH_COLOR)) == PRIORITY_HIGH_COLOR)
-    {
-      (*this)(PRIORITY_HIGH_COLOR) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_LOW_TEXT)) == PRIORITY_LOW_TEXT)
-    {
-      (*this)(PRIORITY_LOW_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_DEFAULT_TEXT)) == PRIORITY_DEFAULT_TEXT)
-    {
-      (*this)(PRIORITY_DEFAULT_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRIORITY_HIGH_TEXT)) == PRIORITY_HIGH_TEXT)
-    {
-      (*this)(PRIORITY_HIGH_TEXT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(LIST_FORMAT)) == LIST_FORMAT)
-    {
-      (*this)(LIST_FORMAT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(ALWAYS_ASK_CONFIRMATION)) == ALWAYS_ASK_CONFIRMATION)
-    {
-      (*this)(ALWAYS_ASK_CONFIRMATION) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(PRINT_COUNTER)) == PRINT_COUNTER)
-    {
-      (*this)(PRINT_COUNTER) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(MONOCHROME)) == MONOCHROME)
-    {
-      (*this)(MONOCHROME) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(TEMPLATES_DIRECTORY)) == TEMPLATES_DIRECTORY)
-    {
-      (*this)(TEMPLATES_DIRECTORY) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(SERVER_WEB_PORT)) == SERVER_WEB_PORT)
-    {
-      (*this)(SERVER_WEB_PORT) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else if (l_string.substr(0, strlen(RESOURCES_DIRECTORY)) == RESOURCES_DIRECTORY)
-    {
-      (*this)(RESOURCES_DIRECTORY) = l_string.substr(l_string.find('=') + 2, l_string.size());
-    }
-    else
-    {
-      l_ret = false;
-      fprintf(stderr, "Error in config file at line %d: %s\n", l_index, l_line);
+
+    if (not l_ret) {
+      fprintf(stderr, "Error in configuration file at line %d : '%s' not expected\n",
+                      l_index, l_line);
       break;
     }
 
     l_index++;
   }
 
+  generateServletList();
   return l_ret;
 }
 
-std::string const & config::operator[](std::string const & p_key)
+void config::generateServletList()
 {
-  return const_cast<std::string const &>(std::map<std::string, std::string>::operator[](p_key));
+  std::string l_servletName;
+  for (char const & n : (*this)[SERVLET_LIST]) {
+    if (n == ' ') {
+      servlet l_servlet;
+      l_servlet("name") = l_servletName;
+      m_servlets.push_back(l_servlet);
+
+      l_servletName.clear();
+    }
+    else {
+      l_servletName += n;
+    }
+  }
+
+  if (not l_servletName.empty()) {
+    servlet l_servlet;
+    l_servlet("name") = l_servletName;
+    m_servlets.push_back(l_servlet);
+  }
+}
+
+std::list<std::string> config::getListOfServlets() const
+{
+  std::list<std::string> l_ret;
+  for (servlet const & l_value : m_servlets) {
+    l_ret.push_back(l_value["name"]);
+  }
+
+  return l_ret;
+}
+
+std::string const & config::operator[](std::string const & p_key) const
+{
+  return const_cast<std::string const &>(std::map<std::string, std::string>::at(p_key));
 }
 
 std::string & config::operator()(std::string const & p_key)
@@ -181,12 +172,23 @@ std::string & config::operator()(std::string const & p_key)
   return std::map<std::string, std::string>::operator[](p_key);
 }
 
-uint32_t config::getServerPort()
+std::string const & servlet::operator[](std::string const & p_key) const
+{
+  return const_cast<std::string const &>(
+    std::map<std::string, std::string>::at(p_key));
+}
+
+std::string & servlet::operator()(std::string const & p_key)
+{
+  return std::map<std::string, std::string>::operator[](p_key);
+}
+
+uint32_t config::getServerPort() const
 {
   return atoi((*this)[SERVER_WEB_PORT].c_str());
 }
 
-bool config::isKeyTrue(std::string const & p_key)
+bool config::isKeyTrue(std::string const & p_key) const
 {
   bool l_res(false);
   std::string const & l_ask = (*this)[p_key];
@@ -196,17 +198,22 @@ bool config::isKeyTrue(std::string const & p_key)
   return l_res;
 }
 
-bool config::isAskForConfirmation()
+bool config::isAskForConfirmation() const
 {
   return isKeyTrue(ALWAYS_ASK_CONFIRMATION);
 }
 
-bool config::isMonochrome()
+bool config::isMonochrome() const
 {
   return isKeyTrue(MONOCHROME);
 }
 
-bool config::isCounterPrintable()
+bool config::isCounterPrintable() const
 {
   return isKeyTrue(PRINT_COUNTER);
+}
+
+servlet::servlet_list const & config::getServlets() const
+{
+  return m_servlets;
 }

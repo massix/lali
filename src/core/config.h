@@ -18,9 +18,10 @@
 //
 
 
-
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
+
+#pragma once
 
 #include <string>
 #include <stdint.h>
@@ -28,6 +29,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <map>
+#include <list>
 
 #define NOTE_ID_COLOR           "note_id_color"
 #define NOTE_ID_FORMAT          "note_id_format"
@@ -49,29 +51,51 @@
 #define TEMPLATES_DIRECTORY     "templates_directory"
 #define RESOURCES_DIRECTORY     "resources_directory"
 #define SERVER_WEB_PORT         "server_web_port"
+#define SERVLET_LIST            "servlet_list"
 
 namespace todo
 {
-  //// Thrown if the configuration file doesn't exist or if it is badly formatted
-  //class bad_config_file : public std::runtime_exception
-  //{
-  //};
+
+  class servlet : public std::map<std::string, std::string>
+  {
+    friend class config;
+
+  public:
+    typedef std::list<servlet> servlet_list;
+    std::string const & operator[](std::string const & p_key) const;
+
+  private:
+    std::string & operator()(std::string const & p_key);
+
+  };
+
 
   class config : public std::map<std::string, std::string>
   {
-    public:
-      config(std::string const & p_filename);
-      bool parse_config();
-      std::string const & operator[](std::string const & p_key);
-      bool                isAskForConfirmation();
-      bool                isMonochrome();
-      bool                isCounterPrintable();
-      uint32_t            getServerPort();
 
-    private:
-      std::string & operator()(std::string const & p_key);
-      std::string m_config_file;
-      bool        isKeyTrue(std::string const & p_key);
+  public:
+    config(std::string const & p_filename);
+    virtual ~config();
+
+  public:
+    bool                   parse_config();
+    bool                   isAskForConfirmation() const;
+    bool                   isMonochrome() const;
+    bool                   isCounterPrintable() const;
+    uint32_t               getServerPort() const;
+    servlet::servlet_list const & getServlets() const;
+    std::list<std::string> getListOfServlets() const;
+
+  public:
+    std::string const & operator[](std::string const & p_key) const;
+
+  private:
+    std::string &         operator()(std::string const & p_key);
+    std::string           m_config_file;
+    bool                  isKeyTrue(std::string const & p_key) const;
+    void                  generateServletList();
+    servlet::servlet_list m_servlets;
+
   };
 }
 
