@@ -31,12 +31,18 @@
 #include <strings.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <syslog.h>
 
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
 
 using namespace todo;
+
+web::~web()
+{
+  closelog();
+}
 
 web::web(config * p_config) :
   m_port(p_config->getServerPort()), m_socket(0), m_running(false), m_config(p_config)
@@ -45,6 +51,9 @@ web::web(config * p_config) :
   m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   m_templates = (*p_config)[TEMPLATES_DIRECTORY];
   m_resources = (*p_config)[RESOURCES_DIRECTORY];
+
+  // Open the syslog connection
+  openlog("lali-web", LOG_PID | LOG_NOWAIT, LOG_USER);
 
   // Register a dump configuration servlet
   m_servlets["/debug/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
@@ -146,10 +155,8 @@ void web::run()
   if (m_socket)
   {
     struct sockaddr_in l_serverAddress;
-    struct sockaddr_in l_clientAddress;
 
     bzero(&l_serverAddress, sizeof(l_serverAddress));
-    bzero(&l_clientAddress, sizeof(l_clientAddress));
 
     l_serverAddress.sin_family = AF_INET;
     l_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -164,14 +171,14 @@ void web::run()
     int yes = 1;
     if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
     {
-      perror("setsockopt()");
+      syslog(LOG_ERR, "Impossible to create a socket");
       return;
     }
 
     // Bind the socket
     if (bind(m_socket, (struct sockaddr *) &l_serverAddress, sizeof(l_serverAddress)) == -1)
     {
-      perror("bind(): ");
+      syslog(LOG_ERR, "Cannot bind to address");
       return;
     }
 
@@ -182,7 +189,7 @@ void web::run()
     // Listen
     if (listen(m_socket, 3) == -1)
     {
-      perror("listen(): ");
+      syslog(LOG_ERR, "Cannot listen on given port");
       return;
     }
 
@@ -192,10 +199,14 @@ void web::run()
 
       FD_ZERO(&l_set);
       FD_SET(m_socket, &l_set);
+
+      syslog(LOG_NOTICE, "Waiting for a connection");
       select(m_socket + 1, &l_set, nullptr, nullptr, &tv);
 
       if (FD_ISSET(m_socket, &l_set) and m_running) {
         std::thread l_thread([&] {
+          struct sockaddr_in l_clientAddress;
+          bzero(&l_clientAddress, sizeof(l_clientAddress));
           std::string l_request;
           int l_clientLength = sizeof(l_clientAddress);
           l_request.resize(4096);
@@ -204,11 +215,15 @@ void web::run()
                                   (struct sockaddr *) &l_clientAddress,
                                   (socklen_t *) &l_clientLength);
 
+          char * l_clientIP = inet_ntoa(l_clientAddress.sin_addr);
+
           int32_t l_length = recv(l_accepted, (void *) l_request.data(), l_request.size(), 0);
           l_request.resize(l_length);
 
           // If we are here, we have a request to handle
           http_request l_headers(l_request);
+          syslog(LOG_NOTICE, "Received request from %s [ %s ]",
+                 l_clientIP, l_headers["HTTP_Request"].c_str());
 
           // Check if we are waiting for a body too (POST)
           if (l_headers.m_request == http_request::kPost) {
@@ -219,10 +234,10 @@ void web::run()
 
             l_request.resize(atoi(l_headers["Content-Length"].c_str()));
             l_length = recv(l_accepted, (void *) l_request.data(), l_request.size(), 0);
-            fprintf(stderr, "Length of body: %d\n", l_length);
+            syslog(LOG_DEBUG, "Length of body: %d", l_length);
 
             if (l_length != -1) {
-              fprintf(stderr, "Received body: %s\n", l_request.c_str());
+              syslog(LOG_DEBUG, "Received body: %s", l_request.c_str());
               l_headers.get_url()->parse_cgi(l_request);
             }
           }
@@ -266,6 +281,8 @@ void web::run()
                           l_response.size(),
                           0);
 
+          syslog(LOG_NOTICE, "Replying to %s [ %s ]",
+                 l_clientIP, l_responseHeaders.code_to_string().c_str());
           close(l_accepted);
         });
 
@@ -274,7 +291,7 @@ void web::run()
       }
     }
 
-    fprintf(stdout, "[%p] closing\n", this);
+    syslog(LOG_NOTICE, "[%p] closing", this);
     close(m_socket);
   }
 }

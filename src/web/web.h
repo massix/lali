@@ -43,6 +43,7 @@ namespace todo
     typedef std::map<std::string, servlet_t> servlets_t;
   public:
     web(config * p_config);
+    virtual ~web();
     void run();
     void stop();
 
