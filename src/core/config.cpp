@@ -112,6 +112,7 @@ bool config::parse_config()
     for (std::string const & l_key : keys) {
       if (l_string.substr(0, l_key.size()) == l_key) {
         (*this)(l_key) = l_string.substr(l_string.find('=') + 2, l_string.size());
+        if (l_key == SERVLET_LIST) generateServletList();
         l_ret = true;
       }
     }
@@ -125,7 +126,6 @@ bool config::parse_config()
     l_index++;
   }
 
-  generateServletList();
   return l_ret;
 }
 
@@ -138,6 +138,11 @@ void config::generateServletList()
       l_servlet("name") = l_servletName;
       m_servlets.push_back(l_servlet);
 
+      keys.push_back(std::string("servlet_") + l_servletName + "_address");
+      keys.push_back(std::string("servlet_") + l_servletName + "_db_file");
+      keys.push_back(std::string("servlet_") + l_servletName + "_resources");
+      keys.push_back(std::string("servlet_") + l_servletName + "_templates");
+      keys.push_back(std::string("servlet_") + l_servletName + "_static");
       l_servletName.clear();
     }
     else {
@@ -149,6 +154,11 @@ void config::generateServletList()
     servlet l_servlet;
     l_servlet("name") = l_servletName;
     m_servlets.push_back(l_servlet);
+    keys.push_back(std::string("servlet_") + l_servletName + "_address");
+    keys.push_back(std::string("servlet_") + l_servletName + "_db_file");
+    keys.push_back(std::string("servlet_") + l_servletName + "_resources");
+    keys.push_back(std::string("servlet_") + l_servletName + "_templates");
+    keys.push_back(std::string("servlet_") + l_servletName + "_static");
   }
 }
 
