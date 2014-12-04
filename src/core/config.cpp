@@ -111,8 +111,28 @@ bool config::parse_config()
 
     for (std::string const & l_key : keys) {
       if (l_string.substr(0, l_key.size()) == l_key) {
-        (*this)(l_key) = l_string.substr(l_string.find('=') + 2, l_string.size());
-        if (l_key == SERVLET_LIST) generateServletList();
+        if (l_key == SERVLET_LIST) {
+          (*this)(l_key) = l_string.substr(l_string.find('=') + 2, l_string.size());
+          generateServletList();
+        }
+
+        else if (l_key.substr(0, std::string("servlet_").size()) == "servlet_") {
+          std::string l_servletName = l_key.substr(std::string("servlet_").size(), l_key.find_first_of(' '));
+          std::string l_servletParam = l_servletName.substr(l_servletName.find_first_of('_') + 1, l_servletName.length());
+          std::string l_servletValue = l_string.substr(l_string.find('=') + 2, l_string.size());
+          l_servletName = l_servletName.substr(0, l_servletName.find_first_of('_'));
+
+          for (servlet & c_servlet : m_servlets) {
+            if (c_servlet["name"] == l_servletName) {
+              fprintf(stderr, "Setting param %s = %s for servlet %s\n", l_servletParam.c_str(), l_servletValue.c_str(), l_servletName.c_str());
+              c_servlet(l_servletParam) = l_servletValue;
+              break;
+            }
+          }
+        }
+
+        else
+          (*this)(l_key) = l_string.substr(l_string.find('=') + 2, l_string.size());
         l_ret = true;
       }
     }

@@ -106,6 +106,23 @@ web::web(config * p_config) :
     p_request["Content-Type"] = l_contentType;
     return str;
   };
+
+  // for (servlet const & servlet : m_config->getServlets()) {
+  //   std::string const & servlet_name = servlet["name"];
+  //   std::string const & servlet_address = (*m_config)[std::string("servlet_" + servlet_name + "_address")];
+  //   fprintf(stderr, "%s\n", servlet_address.c_str());
+
+  //   m_servlets[servlet_address] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+  //     std::string value;
+  //     collection collection((*m_config)["servlet_" + servlet_name + "_db_file"]);
+  //     collection.read_file();
+  //     for (element element : collection) {
+
+  //     }
+
+  //     return value;
+  //   };
+  // }
 }
 
 bool web::get_content_of_file(std::string const & p_file, std::string & p_content, std::string & p_mime)
