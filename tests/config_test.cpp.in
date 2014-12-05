@@ -61,10 +61,6 @@ int main()
   assert(l_servlets.size() == 5);
   assert(std::find(l_servlets.begin(), l_servlets.end(), "private") != l_servlets.end());
 
-  // TODO: Fix this.
-  // assert(l_config["servlet_default_address"] == "/servlet/default/");
-  // assert(l_config["servlet_default_templates"] == "@prefix@/share/lali/servlets/default/templates/");
-
   return 0;
 }
 
