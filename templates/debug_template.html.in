@@ -8,11 +8,17 @@
   <body>
     <h1 class="header">Great news!</h1>
     <div id="container">
-      <p><b>Lali web version @PACKAGE_VERSION@ is running</b>, here is a dump of the configuration</p>
+      <h3>Lali web version @PACKAGE_VERSION@ is running, here is a dump of the configuration</h3>
       <table class="dump">
-        <tr><th>Key</th><th>Value</th></tr>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
         <!-- #BEGINTABLE config -->
-        <tr><td class="key"><code>##key##</code></td> <td class="value"><code>##value##</code></td></tr>
+        <tr>
+          <td class="key"><code>##key##</code></td>
+          <td class="value"><code>##value##</code></td>
+        </tr>
         <!-- #ENDTABLE config -->
         <tr>
           <td class="key">
@@ -39,11 +45,30 @@
           </td>
         </tr>
         <!-- #BEGINTABLE cgi -->
-        <tr><td class="cgi_key"><code>##cgi_key##</code></td><td class="cgi_value"><code>##cgi_value##</code></td></tr>
+        <tr>
+          <td class="cgi_key"><code>##cgi_key##</code></td>
+          <td class="cgi_value"><code>##cgi_value##</code></td>
+        </tr>
         <!-- #ENDTABLE cgi -->
       </table>
 
-      <p class="form">Here is a form to fill to test the POST action</p>
+      <!-- #BEGINTABLE servlet_container -->
+      <h3>Servlet ##servlet_name##</h3>
+      <table class="dump">
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+        <!-- #BEGINTABLE servlet_config -->
+        <tr>
+          <td class="key"><code>##servlet_key##</code></td>
+          <td class="value"><code>##servlet_value##</code></td>
+        </tr>
+        <!-- #ENDTABLE servlet_config -->
+      </table>
+      <!-- #ENDTABLE servlet_container -->
+
+      <h3 class="form">Here is a form to fill to test the POST action</h3>
       <form action="/debug/" method="post" class="test">
         <input type="text" placeholder="This is the first field" name="first_post_field"/>
         <input type="text" placeholder="This is the second field" name="second_post_field"/><br />

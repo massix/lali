@@ -58,8 +58,8 @@ int main()
   assert(l_config.getServerPort() == 3030);
 
   std::list<std::string> l_servlets = l_config.getListOfServlets();
-  assert(l_servlets.size() == 5);
-  assert(std::find(l_servlets.begin(), l_servlets.end(), "private") != l_servlets.end());
+  assert(l_servlets.size() == 1);
+  assert(std::find(l_servlets.begin(), l_servlets.end(), "default") != l_servlets.end());
 
   return 0;
 }

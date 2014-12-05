@@ -34,7 +34,7 @@ resources_directory = @prefix@/share/lali/resources/
 server_web_port     = 3030
 
 # Servlets configuration
-servlet_list        = default work private personal groceries
+servlet_list        = default
 
 # Default servlet configuration
 # Binding the servlet address to `/servlet/default/' will also bind the
@@ -47,28 +47,29 @@ servlet_default_resources = @prefix@/share/lali/servlets/default/resources/
 servlet_default_templates = @prefix@/share/lali/servlets/default/templates/
 servlet_default_static    = @prefix@/share/lali/servlets/default/static/
 
-servlet_work_address   = /servlet/work/
-servlet_work_db_file   = @prefix@/share/lali/servlets/work/notes.db
-servlet_work_resources = @prefix@/share/lali/servlets/work/resources/
-servlet_work_templates = @prefix@/share/lali/servlets/work/templates/
-servlet_work_static    = @prefix@/share/lali/servlets/work/static/
+## Examples of other servlets.
+# servlet_work_address   = /servlet/work/
+# servlet_work_db_file   = @prefix@/share/lali/servlets/work/notes.db
+# servlet_work_resources = @prefix@/share/lali/servlets/work/resources/
+# servlet_work_templates = @prefix@/share/lali/servlets/work/templates/
+# servlet_work_static    = @prefix@/share/lali/servlets/work/static/
 
-servlet_private_address   = /servlet/private/
-servlet_private_db_file   = @prefix@/share/lali/servlets/private/notes.db
-servlet_private_resources = @prefix@/share/lali/servlets/private/resources/
-servlet_private_templates = @prefix@/share/lali/servlets/private/templates/
-servlet_private_static    = @prefix@/share/lali/servlets/private/static/
+# servlet_private_address   = /servlet/private/
+# servlet_private_db_file   = @prefix@/share/lali/servlets/private/notes.db
+# servlet_private_resources = @prefix@/share/lali/servlets/private/resources/
+# servlet_private_templates = @prefix@/share/lali/servlets/private/templates/
+# servlet_private_static    = @prefix@/share/lali/servlets/private/static/
 
-servlet_personal_address   = /servlet/personal/
-servlet_personal_db_file   = @prefix@/share/lali/servlets/personal/notes.db
-servlet_personal_resources = @prefix@/share/lali/servlets/personal/resources/
-servlet_personal_templates = @prefix@/share/lali/servlets/personal/templates/
-servlet_personal_static    = @prefix@/share/lali/servlets/personal/static/
+# servlet_personal_address   = /servlet/personal/
+# servlet_personal_db_file   = @prefix@/share/lali/servlets/personal/notes.db
+# servlet_personal_resources = @prefix@/share/lali/servlets/personal/resources/
+# servlet_personal_templates = @prefix@/share/lali/servlets/personal/templates/
+# servlet_personal_static    = @prefix@/share/lali/servlets/personal/static/
 
-servlet_groceries_address   = /servlet/groceries/
-servlet_groceries_db_file   = @prefix@/share/lali/servlets/groceries/notes.db
-servlet_groceries_resources = @prefix@/share/lali/servlets/groceries/resources/
-servlet_groceries_templates = @prefix@/share/lali/servlets/groceries/templates/
-servlet_groceries_static    = @prefix@/share/lali/servlets/groceries/static/
+# servlet_groceries_address   = /servlet/groceries/
+# servlet_groceries_db_file   = @prefix@/share/lali/servlets/groceries/notes.db
+# servlet_groceries_resources = @prefix@/share/lali/servlets/groceries/resources/
+# servlet_groceries_templates = @prefix@/share/lali/servlets/groceries/templates/
+# servlet_groceries_static    = @prefix@/share/lali/servlets/groceries/static/
 
 # This is another commen

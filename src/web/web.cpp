@@ -79,6 +79,18 @@ web::web(config * p_config) :
         }
       }
 
+      for (servlet const & l_servlet : m_config->getServlets()) {
+        flateSetVar(l_flate, "servlet_name", l_servlet["name"].c_str());
+
+        for (servlet::value_type const & l_value : l_servlet) {
+          flateSetVar(l_flate, "servlet_key", l_value.first.c_str());
+          flateSetVar(l_flate, "servlet_value", l_value.second.c_str());
+          flateDumpTableLine(l_flate, "servlet_config");
+        }
+
+        flateDumpTableLine(l_flate, "servlet_container");
+      }
+
       l_ret = flatePage(l_flate);
     }
     else if (not get_content_of_file(m_templates + p_page, l_ret, l_contentType)) {
@@ -107,22 +119,25 @@ web::web(config * p_config) :
     return str;
   };
 
-  // for (servlet const & servlet : m_config->getServlets()) {
-  //   std::string const & servlet_name = servlet["name"];
-  //   std::string const & servlet_address = (*m_config)[std::string("servlet_" + servlet_name + "_address")];
-  //   fprintf(stderr, "%s\n", servlet_address.c_str());
+  for (servlet const & c_servlet : m_config->getServlets()) {
+    std::string const & l_servlet_name = c_servlet["name"];
+    std::string const & l_servlet_address = c_servlet["address"];
 
-  //   m_servlets[servlet_address] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
-  //     std::string value;
-  //     collection collection((*m_config)["servlet_" + servlet_name + "_db_file"]);
-  //     collection.read_file();
-  //     for (element element : collection) {
+    m_servlets[l_servlet_address] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      std::string l_value = "<b>A total of ";
+      collection collection(c_servlet["db_file"]);
+      collection.read_file();
 
-  //     }
+      l_value += std::to_string(collection.size());
+      l_value += " todos was found in the collection at ";
+      l_value += c_servlet["db_file"];
+      l_value += " named ";
+      l_value += l_servlet_name;
+      l_value += "</b>";
 
-  //     return value;
-  //   };
-  // }
+      return l_value;
+    };
+  }
 }
 
 bool web::get_content_of_file(std::string const & p_file, std::string & p_content, std::string & p_mime)

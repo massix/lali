@@ -124,7 +124,6 @@ bool config::parse_config()
 
           for (servlet & c_servlet : m_servlets) {
             if (c_servlet["name"] == l_servletName) {
-              fprintf(stderr, "Setting param %s = %s for servlet %s\n", l_servletParam.c_str(), l_servletValue.c_str(), l_servletName.c_str());
               c_servlet(l_servletParam) = l_servletValue;
               break;
             }
