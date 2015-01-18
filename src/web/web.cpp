@@ -23,6 +23,7 @@
 #include <core/collection.h>
 #include <flate/flate.h>
 #include <core/config.h>
+#include <json11.hpp>
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <arpa/inet.h>
@@ -175,6 +176,57 @@ web::web(config * p_config) :
 
       return l_value;
     };
+
+    // ------ BEGIN APIS ------
+
+    // LIST (no parameters)
+    m_servlets[l_servlet_address + "api/list/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      collection collection(c_servlet["db_file"]);
+      collection.read_file();
+
+      json11::Json::object l_jsonObject;
+      l_jsonObject["db_file"] = c_servlet["db_file"];
+      l_jsonObject["nb_todos"] = (int) collection.size();
+
+      std::vector<json11::Json::object> l_todos;
+      for (todo::element const & c_todo : collection) {
+        json11::Json::object l_object;
+        l_object["title"] = c_todo.m_title;
+        l_object["priority"] = (int) c_todo.m_priority;
+        l_object["body"] = c_todo.m_body;
+        l_object["index"] = (int) c_todo.m_index;
+
+        l_todos.push_back(l_object);
+      }
+
+      l_jsonObject["todos"] = l_todos;
+      json11::Json l_json(l_jsonObject);
+
+      p_request["ContentType"] = "application/json";
+      return l_json.dump();
+    };
+
+    // ADD (title=&body=&priority=) -- POST ONLY
+    m_servlets[l_servlet_address + "api/add/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      collection collection(c_servlet["db_file"]);
+
+      if (p_request.m_request == http_request::kPost) {
+        collection.read_file();
+
+        todo::element l_element;
+        try {
+          l_element.m_title = p_cgi.at("title");
+          l_element.m_body = p_cgi.at("body");
+
+          collection.push_back(l_element);
+          collection.write_file();
+        }
+        catch (std::exception const & l_exception) {}
+      }
+
+      return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
+    };
+    // ------ END APIS ------
 
     m_servlets[l_servlet_address + "resources/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
       std::string l_resource = l_servlet_resources + p_page;
@@ -334,6 +386,7 @@ void web::run()
           // Call the servlet if we have it
           std::string l_html_response;
           http_request l_responseHeaders;
+          l_responseHeaders.m_request = l_headers.m_request;
           l_responseHeaders["Content-Type"] = "text/html";
           l_responseHeaders["Connection"] = "close";
 

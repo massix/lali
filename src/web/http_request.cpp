@@ -127,7 +127,6 @@ http_request::http_request(std::string const & p_request) : m_valid(false)
   std::string l_protocol = l_request.substr(l_request.find_last_of(' ') + 1);
   std::string l_last_line;
 
-  // For now we only support GET
   m_request = kGet;
   if (l_method == "POST")
   {
