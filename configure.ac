@@ -44,6 +44,11 @@ AC_CONFIG_FILES([
   templates/static_page.htm
   resources/lalirc
   tests/config_test.cpp
-])
+  servlets/Makefile
+  servlets/default/Makefile
+  servlets/default/resources/Makefile
+  servlets/default/templates/Makefile
+  servlets/default/static/Makefile
+ ])
 
 AC_OUTPUT

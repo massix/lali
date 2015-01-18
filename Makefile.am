@@ -1,1 +1,1 @@
-SUBDIRS = src tests resources templates
+SUBDIRS = src tests resources templates servlets

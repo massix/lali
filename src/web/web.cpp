@@ -122,21 +122,78 @@ web::web(config * p_config) :
   for (servlet const & c_servlet : m_config->getServlets()) {
     std::string const & l_servlet_name = c_servlet["name"];
     std::string const & l_servlet_address = c_servlet["address"];
+    std::string const & l_servlet_resources = c_servlet["resources"];
+    std::string const & l_servlet_templates = c_servlet["templates"];
+    std::string const & l_servlet_static = c_servlet["static"];
 
     m_servlets[l_servlet_address] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
-      std::string l_value = "<b>A total of ";
       collection collection(c_servlet["db_file"]);
       collection.read_file();
+      std::string l_value;
+      std::string l_contentType;
 
-      l_value += std::to_string(collection.size());
-      l_value += " todos was found in the collection at ";
-      l_value += c_servlet["db_file"];
-      l_value += " named ";
-      l_value += l_servlet_name;
-      l_value += "</b>";
+      if (p_page.empty()) {
+        l_value = "<b>A total of ";
+        l_value += std::to_string(collection.size());
+        l_value += " todos was found in the collection at ";
+        l_value += c_servlet["db_file"];
+        l_value += " named ";
+        l_value += l_servlet_name;
+        l_value += "</b>";
+      }
+
+      else if (not get_content_of_file(l_servlet_templates + p_page, l_value, l_contentType)) {
+        p_request.m_code = http_request::kNotFound;
+      }
+
+      else {
+        // A template has been loaded, let's fill it and serve.
+        Flate * l_flate = NULL;
+        flateSetFile(&l_flate, std::string(l_servlet_templates + p_page).c_str());
+
+        // Debug information
+        flateSetVar(l_flate, "dbg_address", l_servlet_address.c_str());
+        flateSetVar(l_flate, "dbg_db_file", c_servlet["db_file"].c_str());
+        flateSetVar(l_flate, "dbg_resources", l_servlet_resources.c_str());
+        flateSetVar(l_flate, "dbg_templates", l_servlet_templates.c_str());
+        flateSetVar(l_flate, "dbg_static", l_servlet_static.c_str());
+
+        // Collection information
+        flateSetVar(l_flate, "total_todos", std::to_string(collection.size()).c_str());
+
+        // Todos
+        for (todo::element const & c_todo : collection) {
+          flateSetVar(l_flate, "todo_priority", std::to_string(c_todo.m_priority).c_str());
+          flateSetVar(l_flate, "todo_title", c_todo.m_title.c_str());
+          flateSetVar(l_flate, "todo_body", c_todo.m_body.c_str());
+          flateSetVar(l_flate, "todo_index", std::to_string(c_todo.m_index).c_str());
+          flateDumpTableLine(l_flate, "todo");
+        }
+
+        l_value = flatePage(l_flate);
+      }
 
       return l_value;
     };
+
+    m_servlets[l_servlet_address + "resources/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      std::string l_resource = l_servlet_resources + p_page;
+
+      std::string l_contentType;
+      std::string str;
+
+      p_request.m_code = http_request::kOkay;
+
+      if (not get_content_of_file(l_resource, str, l_contentType)) {
+        p_request.m_code = http_request::kNotFound;
+      }
+
+      p_request["Content-Type"] = l_contentType;
+      return str;
+    };
+
+    // Create an alias
+    m_servlets[l_servlet_address + "static/"] = m_servlets[l_servlet_address + "resources/"];
   }
 }
 

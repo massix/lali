@@ -37,11 +37,11 @@ server_web_port     = 3030
 servlet_list        = default
 
 # Default servlet configuration
-# Binding the servlet address to `/servlet/default/' will also bind the
+# Binding the servlet address to `/default/' will also bind the
 # following addresses :
-# `/servlet/default/resources/' for CSS, JS and images ;
-# `/servlet/default/static/' for static web pages (default .html)
-servlet_default_address   = /servlet/default/
+# `/default/resources/' for CSS, JS and images ;
+# `/default/static/' for static web pages (default .html)
+servlet_default_address   = /default/
 servlet_default_db_file   = @prefix@/share/lali/servlets/default/notes.db
 servlet_default_resources = @prefix@/share/lali/servlets/default/resources/
 servlet_default_templates = @prefix@/share/lali/servlets/default/templates/
