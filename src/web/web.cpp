@@ -227,7 +227,7 @@ web::web(config * p_config) :
       return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
     };
 
-    // DEL (index=) ONLY
+    // DEL (index=) -- POST ONLY
     m_servlets[l_servlet_address + "api/del/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
       collection collection(c_servlet["db_file"]);
 
@@ -250,6 +250,29 @@ web::web(config * p_config) :
           collection.erase(collection.begin() + l_foundIndex);
           collection.write_file();
         }
+      }
+
+      return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
+    };
+
+    // MODIFY (index=&title=&body=) -- POST ONLY
+    m_servlets[l_servlet_address + "api/modify/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      collection collection(c_servlet["db_file"]);
+
+      if (p_request.m_request == http_request::kPost) {
+        collection.read_file();
+        uint32_t l_index = std::stoi(p_cgi.at("index"));
+        std::string l_newTitle = p_cgi.at("title");
+        std::string l_newBody = p_cgi.at("body");
+
+        for (todo::element & c_element : collection) {
+          if (c_element.m_index == l_index) {
+            c_element.m_title = l_newTitle;
+            c_element.m_body = l_newBody;
+          }
+        }
+
+        collection.write_file();
       }
 
       return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
