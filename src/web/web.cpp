@@ -226,6 +226,34 @@ web::web(config * p_config) :
 
       return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
     };
+
+    // DEL (index=) ONLY
+    m_servlets[l_servlet_address + "api/del/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
+      collection collection(c_servlet["db_file"]);
+
+      if (p_request.m_request == http_request::kPost) {
+        collection.read_file();
+        uint32_t l_index = std::stoi(p_cgi.at("index"));
+        bool l_found(false);
+        uint32_t l_foundIndex(0);
+
+        for (todo::element const & c_element : collection) {
+          if (c_element.m_index == l_index) {
+            l_found = true;
+            break;
+          }
+
+          l_foundIndex++;
+        }
+
+        if (l_found) {
+          collection.erase(collection.begin() + l_foundIndex);
+          collection.write_file();
+        }
+      }
+
+      return m_servlets[l_servlet_address + "api/list/"](p_page, p_cgi, p_request);
+    };
     // ------ END APIS ------
 
     m_servlets[l_servlet_address + "resources/"] = [&](std::string const & p_page, url::cgi_t const & p_cgi, http_request & p_request)->std::string {
@@ -341,7 +369,6 @@ void web::run()
       FD_ZERO(&l_set);
       FD_SET(m_socket, &l_set);
 
-      syslog(LOG_NOTICE, "Waiting for a connection");
       select(m_socket + 1, &l_set, nullptr, nullptr, &tv);
 
       if (FD_ISSET(m_socket, &l_set) and m_running) {
